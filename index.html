@@ -204,6 +204,11 @@
     box-shadow: 0 2px 6px rgba(0,0,0,.35);
   }
   .mini-card.red { color: #d8334c; }
+  .mini-card.back {
+    color: #eef4fb;
+    background: linear-gradient(135deg, #35558a, #1d3a63);
+    border-color: rgba(255,255,255,.4);
+  }
   .mini-cards { display: inline-flex; flex-wrap: wrap; gap: 4px; margin-left: 4px; }
   .log-tag {
     display: inline-block;
@@ -766,9 +771,8 @@ function handleAction(playerId, message) {
     const roundWinnerId = truthful ? play.playerId : playerId;
     const roundWinner = playerById(roundWinnerId);
 
-    // Cards are revealed ONLY here, after a doubt.
-    addLog("doubt", `<b>${escapeHtml(player.name)}</b> doubted <b>${escapeHtml(bluffer?.name || "?")}</b>'s claim of <b>${escapeHtml(play.rank)}</b>. The claim was <b>${truthful ? "TRUE ✅" : "A BLUFF ❌"}</b>.`);
-    addLog("info", `🔍 The revealed cards were:`, play.cards);
+    // Cards stay secret — only the verdict (true / bluff) is announced.
+    addLog("doubt", `<b>${escapeHtml(player.name)}</b> doubted <b>${escapeHtml(bluffer?.name || "?")}</b>'s claim of <b>${escapeHtml(play.rank)}</b>. The claim was <b>${truthful ? "TRUE ✅" : "A BLUFF ❌"}</b>. The played cards stay hidden. 🂠`);
 
     if (gameState.pile.length > 0) {
       const takenCards = gameState.pile.splice(0);
@@ -852,11 +856,6 @@ function cardHtml(card, index, isSelected, disabled) {
     <span class="corner">${escapeHtml(rank)}</span>
     <span class="suit">${suit}</span>
   </button>`;
-}
-
-function miniCardHtml(card) {
-  const red = suitOf(card) === "♥" || suitOf(card) === "♦";
-  return `<span class="mini-card ${red ? "red" : ""}">${escapeHtml(rankOf(card))}${suitOf(card)}</span>`;
 }
 
 const PLACE_MEDALS = {1:"🥇", 2:"🥈", 3:"🥉"};
@@ -1074,13 +1073,11 @@ function render() {
     sendAction({type:"pass"});
   };
 
-  // Log — mini cards appear only for REVEALED cards (after a doubt).
+  // Log — face-down placeholders only; real card values are never shown or sent.
   $("log").innerHTML = (state.log || []).map(entry => {
-    const chips = (entry.cards || []).map(miniCardHtml).join("");
     return `<div class="log-entry">
       <span class="log-tag ${escapeHtml(entry.tag || "info")}">${escapeHtml((entry.tag || "info").toUpperCase())}</span>
       <span>${sanitizeLogText(entry.text)}</span>
-      ${chips ? `<span class="mini-cards">${chips}</span>` : ""}
     </div>`;
   }).join("");
   const logBox = $("log");
