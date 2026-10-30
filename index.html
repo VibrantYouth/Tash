@@ -399,7 +399,8 @@
 
 const RANKS = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
 const SUITS = ["♠","♥","♦","♣"];
-const MAX_PLAY = 4; // maximum cards a player can throw per turn
+const MAX_PLAYERS = 8;
+let lastActionAt = {};
 const $ = id => document.getElementById(id);
 
 let peer = null;
@@ -420,9 +421,15 @@ const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, ch => ({
 const rankOf = card => card.slice(0, -1);
 const suitOf = card => card.slice(-1);
 const cleanCode = value => value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
-
+function sanitizeName(value, fallback) {
+  const cleaned = String(value || "").replace(/[^\p{L}\p{N} _\-]/gu, "").trim().slice(0, 16);
+  return cleaned || fallback;
+}
 function newRoomCode() {
-  return Math.random().toString(36).slice(2, 6).toUpperCase();
+  const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  const bytes = new Uint32Array(6);
+  crypto.getRandomValues(bytes);
+  return [...bytes].map(b => chars[b % chars.length]).join("");
 }
 
 function freshGame() {
@@ -496,9 +503,9 @@ function getMyState() {
 
 function addPlayer(id, name) {
   if (!gameState || gameState.started) return;
+  if (gameState.players.length >= MAX_PLAYERS) return;
   if (!gameState.players.some(player => player.id === id)) {
-    const safeName = String(name || "").trim().slice(0, 16) ||
-      `Player ${gameState.players.length + 1}`;
+   const safeName = sanitizeName(name, `Player ${gameState.players.length + 1}`);
     gameState.players.push({id, name:safeName, hand:[]});
     gameState.order = gameState.players.map(player => player.id);
     addLog("info", `<b>${escapeHtml(safeName)}</b> joined the room.`);
@@ -770,7 +777,12 @@ function sendAction(message) {
   if (isHost) handleAction(peer.id, message);
   else if (hostConn?.open) hostConn.send(message);
 }
-
+  
+function sanitizeLogText(text) {
+  return String(text || "")
+    .replace(/<\s*(script|iframe|object|embed|link|style|img|svg)[^>]*>/gi, "")
+    .replace(/on\w+\s*=/gi, "");
+}
 function cardHtml(card, index, isSelected, disabled) {
   const red = suitOf(card) === "♥" || suitOf(card) === "♦";
   const rank = rankOf(card);
@@ -1008,7 +1020,7 @@ function render() {
     ).join("");
     return `<div class="log-entry">
       <span class="log-tag ${escapeHtml(entry.tag || "info")}">${escapeHtml((entry.tag || "info").toUpperCase())}</span>
-      <span>${entry.text}</span>
+   <span>${sanitizeLogText(entry.text)}</span>
       ${chips ? `<span class="mini-cards">${chips}</span>` : ""}
     </div>`;
   }).join("");
@@ -1037,7 +1049,7 @@ $("createBtn").onclick = () => {
     return;
   }
 
-  myName = ($("nameInput").value || "").trim().slice(0,16) || "Host";
+myName = sanitizeName($("nameInput").value, "Host");
   roomCode = cleanCode($("roomInput").value);
   if (roomCode.length < 3) roomCode = newRoomCode();
 
@@ -1067,11 +1079,15 @@ $("createBtn").onclick = () => {
     connections[connection.peer] = connection;
 
     connection.on("data", data => {
-      if (!data || typeof data.type !== "string") return;
-      if (data.type === "join") addPlayer(connection.peer, data.name);
-      else handleAction(connection.peer, data);
-    });
-
+  if (!data || typeof data.type !== "string") return;
+  if (data.type === "join") addPlayer(connection.peer, data.name);
+  else {
+    const now = Date.now();
+    if (now - (lastActionAt[connection.peer] || 0) < 150) return;
+    lastActionAt[connection.peer] = now;
+    handleAction(connection.peer, data);
+  }
+});
     connection.on("close", () => {
       delete connections[connection.peer];
       if (gameState && !gameState.started) {
@@ -1098,13 +1114,13 @@ $("joinBtn").onclick = () => {
     return;
   }
 
-  myName = ($("nameInput").value || "").trim().slice(0,16) || "Player";
+ myName = sanitizeName($("nameInput").value, "Player");
   roomCode = cleanCode($("roomInput").value);
 
-  if (roomCode.length < 3) {
-    $("status").textContent = "Enter a room code with at least 3 characters.";
-    return;
-  }
+ if (roomCode.length < 5) {
+  $("status").textContent = "Enter a room code with at least 5 characters.";
+  return;
+}
 
   $("createBtn").disabled = true;
   $("joinBtn").disabled = true;
