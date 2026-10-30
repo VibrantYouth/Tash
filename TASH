@@ -1,0 +1,1161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Da Hujre Tash — Card Game</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg1: #0b1220;
+    --bg2: #16233a;
+    --panel: rgba(255,255,255,.055);
+    --panel2: rgba(255,255,255,.035);
+    --line: rgba(255,255,255,.14);
+    --text: #eef4fb;
+    --muted: #9fb0c3;
+    --accent: #4be0c6;
+    --danger: #ff7b7b;
+    --gold: #ffd166;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 20px 14px 40px;
+    min-height: 100vh;
+    background:
+      radial-gradient(1100px 500px at 15% -10%, #1d3a63 0%, transparent 60%),
+      radial-gradient(900px 500px at 110% 20%, #35204d 0%, transparent 55%),
+      linear-gradient(160deg, var(--bg1), var(--bg2));
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  button, input { font: inherit; }
+  button {
+    min-height: 46px;
+    padding: 10px 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: rgba(255,255,255,.09);
+    color: var(--text);
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform .08s ease, filter .15s ease;
+  }
+  button:hover:not(:disabled) { filter: brightness(1.15); transform: translateY(-1px); }
+  button:active:not(:disabled) { transform: translateY(0); }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  button.primary {
+    border-color: transparent;
+    background: linear-gradient(135deg, #35e2c6, #2bb3d9);
+    color: #06241f;
+    font-weight: 800;
+    box-shadow: 0 4px 18px rgba(43,179,217,.35);
+  }
+  button.danger {
+    border-color: rgba(255,123,123,.5);
+    background: linear-gradient(135deg, #7a2f3a, #5b2630);
+    color: #ffe1e1;
+  }
+  input {
+    min-height: 46px;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: rgba(0,0,0,.25);
+    color: var(--text);
+    width: min(100%, 240px);
+  }
+  input::placeholder { color: var(--muted); }
+  .app { width: min(960px, 100%); margin: 0 auto; }
+  h1 {
+    margin: 6px 0 2px;
+    font-size: 30px;
+    letter-spacing: .5px;
+    background: linear-gradient(90deg, #4be0c6, #7db2ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .subtitle { margin: 0 0 18px; color: var(--muted); }
+  .panel {
+    margin: 14px 0;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--panel);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .muted { color: var(--muted); }
+  .hidden { display: none !important; }
+  #status { min-height: 22px; margin-top: 12px; color: var(--muted); }
+  .roomline { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 13px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel2);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .turnbox {
+    margin-top: 14px;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(75,224,198,.12), rgba(125,178,255,.08));
+  }
+  .turnbox strong { display: block; margin-bottom: 4px; font-size: 19px; }
+  #players {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .player {
+    padding: 13px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--panel2);
+  }
+  .player.current {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), 0 0 22px rgba(75,224,198,.25);
+  }
+  .player.done {
+    opacity: .65;
+    border-color: rgba(255,209,102,.45);
+  }
+  .player-name { font-weight: 750; }
+  .player-meta { margin-top: 5px; color: var(--muted); font-size: 13px; }
+  .medal { margin-left: 6px; }
+  .section-title { margin: 0 0 10px; font-size: 15px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); }
+  .table {
+    padding: 18px;
+    border: 1px dashed rgba(255,255,255,.25);
+    border-radius: 14px;
+    background: radial-gradient(600px 200px at 50% 0%, rgba(255,255,255,.05), transparent);
+    line-height: 1.8;
+  }
+  .pilecount {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 6px 14px;
+    border-radius: 10px;
+    background: rgba(255,209,102,.12);
+    border: 1px solid rgba(255,209,102,.3);
+    color: var(--gold);
+    font-weight: 700;
+  }
+  #hand { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
+  .card {
+    position: relative;
+    width: 68px;
+    height: 92px;
+    border: 2px solid rgba(255,255,255,.7);
+    border-radius: 12px;
+    background: linear-gradient(160deg, #ffffff, #e8edf2);
+    color: #1a2430;
+    font-size: 21px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform .1s ease, box-shadow .15s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,.35);
+  }
+  .card.red { color: #d8334c; }
+  .card .corner { position: absolute; top: 6px; left: 8px; font-size: 17px; }
+  .card .suit { position: absolute; bottom: 6px; right: 8px; font-size: 26px; }
+  .card.selected {
+    outline: 3px solid var(--accent);
+    transform: translateY(-8px) scale(1.04);
+    box-shadow: 0 8px 24px rgba(75,224,198,.45);
+  }
+  .card:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+  .hint { min-height: 22px; color: var(--muted); font-size: 13px; }
+  #actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+
+  /* Mini cards for the log */
+  .log-entry {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 7px 4px;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .log-entry b { color: var(--text); }
+  .mini-card {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 40px;
+    padding: 0 5px;
+    border: 1.5px solid rgba(255,255,255,.75);
+    border-radius: 6px;
+    background: linear-gradient(160deg, #ffffff, #e8edf2);
+    color: #1a2430;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: 0 2px 6px rgba(0,0,0,.35);
+  }
+  .mini-card.red { color: #d8334c; }
+  .mini-card.back {
+    background: repeating-linear-gradient(45deg, #2b4a7a, #2b4a7a 4px, #1d3557 4px, #1d3557 8px);
+    color: transparent;
+    border-color: rgba(255,255,255,.4);
+  }
+  .mini-cards { display: inline-flex; flex-wrap: wrap; gap: 4px; margin-left: 4px; }
+  .log-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    margin-right: 4px;
+  }
+  .log-tag.play { background: rgba(75,224,198,.18); color: var(--accent); }
+  .log-tag.doubt { background: rgba(255,123,123,.18); color: var(--danger); }
+  .log-tag.penalty { background: rgba(255,209,102,.18); color: var(--gold); }
+  .log-tag.finish { background: rgba(255,209,102,.25); color: var(--gold); }
+  .log-tag.info { background: rgba(125,178,255,.15); color: #9cc3ff; }
+
+  #rankPanel {
+    margin: 12px 0 2px;
+    padding: 12px;
+    border: 1px solid rgba(75,224,198,.35);
+    border-radius: 14px;
+    background: rgba(75,224,198,.06);
+  }
+  #rankPanel .rank-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(58px, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .rank-btn {
+    min-height: 48px;
+    padding: 6px 4px;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 17px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid var(--line);
+  }
+  .rank-btn:hover { border-color: var(--accent); }
+  #log { max-height: 260px; overflow: auto; }
+
+  .rules { margin: 8px 0 0; padding-left: 20px; color: var(--muted); line-height: 1.7; }
+  details summary { cursor: pointer; color: var(--accent); font-weight: 700; }
+
+  /* Winner popup */
+  #winOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(4, 8, 16, .82);
+    backdrop-filter: blur(6px);
+    padding: 20px;
+  }
+  .win-card {
+    width: min(440px, 100%);
+    padding: 34px 26px;
+    text-align: center;
+    border: 2px solid var(--gold);
+    border-radius: 22px;
+    background: linear-gradient(160deg, #1b2a45, #2a1f3d);
+    box-shadow: 0 0 60px rgba(255,209,102,.35);
+    animation: pop .35s ease;
+  }
+  @keyframes pop {
+    from { transform: scale(.75); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .win-card .trophy { font-size: 58px; }
+  .win-card h2 {
+    margin: 12px 0 6px;
+    font-size: 26px;
+    background: linear-gradient(90deg, #ffd166, #ff9f5a);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .win-card .who { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  .win-card .sub { color: var(--muted); margin-bottom: 18px; }
+  .standings {
+    margin: 0 0 18px;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+  }
+  .standings li {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    font-size: 15px;
+  }
+  .popup-count { color: var(--muted); font-size: 12px; margin-bottom: 10px; }
+  @media (max-width: 520px) {
+    body { padding: 12px 8px 30px; }
+    .panel { padding: 14px; }
+    .card { width: 58px; height: 80px; font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+<main class="app">
+  <h1>🃏 Da Hujre Tash</h1>
+  <p class="subtitle">Supports 2 to 8 players</p>
+
+  <section id="lobby" class="panel">
+    <h2 class="section-title">Join a game</h2>
+    <div class="row">
+      <input id="nameInput" maxlength="16" placeholder="Your name" autocomplete="nickname">
+      <input id="roomInput" maxlength="8" placeholder="Room code" autocomplete="off">
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button id="createBtn" class="primary">Create room</button>
+      <button id="joinBtn">Join room</button>
+    </div>
+    <div id="status">The host creates a room, then shares its code. Everyone joins with the same code — it works for 2, 3, 4 or more players. Internet is required.</div>
+  </section>
+
+  <section id="game" class="hidden">
+    <div class="panel">
+      <div class="roomline">
+        <span class="pill">Room <b id="roomLabel"></b></span>
+        <span class="pill" id="connectionLabel">Connected</span>
+      </div>
+      <div class="turnbox" aria-live="polite">
+        <strong id="turnTitle">Waiting for game</strong>
+        <span id="turnHelp" class="muted"></span>
+      </div>
+      <div id="players"></div>
+    </div>
+
+    <div class="panel">
+      <h2 class="section-title">Table</h2>
+      <div id="tableInfo" class="table"></div>
+    </div>
+
+    <div class="panel">
+      <h2 class="section-title">Your cards</h2>
+      <div class="muted">Tap 1–4 cards, then play. If a claim is open you must continue it.</div>
+      <div id="hand"></div>
+      <div id="handHint" class="hint"></div>
+      <div id="rankPanel" class="hidden">
+        <b style="color:var(--accent)">Choose a rank to start your claim — tap it:</b>
+        <div id="rankGrid" class="rank-grid"></div>
+      </div>
+      <div id="actions"></div>
+    </div>
+
+    <div class="panel">
+      <h2 class="section-title">Game log</h2>
+      <div id="log"></div>
+    </div>
+
+    <details class="panel">
+      <summary>How to play</summary>
+      <ol class="rules">
+        <li>On your turn, play 1–4 cards face down. If no claim is open, <b>tap a rank</b> in the chooser panel to start a claim.</li>
+        <li>While a claim is open, everyone must <b>continue that same rank</b> — you cannot switch to another rank until the claim is finished.</li>
+        <li>A claim finishes when someone <b>doubts</b> it, or when <b>everyone else passes</b>.</li>
+        <li><b>Doubt correct</b> (the play was a bluff) → the whole pile goes to the <b>bluffer's hand</b>, and the <b>doubter wins the round</b> and throws the first card of the next claim.</li>
+        <li><b>Doubt wrong</b> (the play was true) → the whole pile goes to the <b>doubter's hand</b>, and the bluffer starts the next claim.</li>
+        <li>If everyone passes, the pile is removed from the game and the turn goes to the <b>next player</b>, who starts the next claim.</li>
+        <li>When a player empties their hand and their last claim is <b>accepted</b>, they finish — <b>1st</b>, then everyone else keeps playing for <b>2nd</b> and <b>3rd</b> place, until only one player remains.</li>
+      </ol>
+    </details>
+  </section>
+
+  <!-- Winner popup -->
+  <div id="winOverlay" class="hidden">
+    <div class="win-card">
+      <div class="trophy" id="winTrophy">🏆</div>
+      <h2 id="winTitle">Congratulations!</h2>
+      <div class="who" id="winWho"></div>
+      <div class="sub" id="winSub"></div>
+      <ul class="standings" id="winStandings"></ul>
+      <div class="popup-count" id="popupCount"></div>
+      <button id="winCloseBtn" class="primary">Continue</button>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<script>
+"use strict";
+
+const RANKS = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+const SUITS = ["♠","♥","♦","♣"];
+const MAX_PLAY = 4; // maximum cards a player can throw per turn
+const $ = id => document.getElementById(id);
+
+let peer = null;
+let hostConn = null;
+let connections = {};
+let isHost = false;
+let roomCode = "";
+let myName = "";
+let gameState = null;
+let selected = new Set();
+let shownFinishCount = 0;  // how many finish events this client has already popped up
+let popupQueue = [];       // finish events waiting to be displayed
+
+const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, ch => ({
+  "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+}[ch]));
+
+const rankOf = card => card.slice(0, -1);
+const suitOf = card => card.slice(-1);
+const cleanCode = value => value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
+
+function newRoomCode() {
+  return Math.random().toString(36).slice(2, 6).toUpperCase();
+}
+
+function freshGame() {
+  return {
+    started: false,
+    players: [],
+    order: [],        // ids of players still in the game (not yet finished)
+    standings: [],    // [{id, name, place}] — 1st, 2nd, 3rd, ...
+    finishQueue: [],  // every finish event, in order — drives the popups
+    turn: 0,
+    pile: [],
+    claim: null,
+    lastPlay: null,
+    passCount: 0,
+    pendingWinner: null, // player who just emptied their hand, awaiting accept/doubt
+    log: []           // structured entries: {tag, text, cards}
+  };
+}
+
+function playerById(id) {
+  return gameState?.players.find(player => player.id === id) || null;
+}
+
+function publicStateFor(id) {
+  const player = playerById(id);
+  const turnId = gameState.order.length
+    ? gameState.order[gameState.turn % gameState.order.length]
+    : null;
+
+  return {
+    roomCode,
+    started: gameState.started,
+    players: gameState.players.map(p => ({
+      id: p.id, name: p.name, count: p.hand.length
+    })),
+    order: gameState.order.slice(),
+    standings: gameState.standings.slice(),
+    finishQueue: gameState.finishQueue.slice(),
+    turn: turnId,
+    claim: gameState.claim ? {rank: gameState.claim.rank, starterId: gameState.claim.starterId} : null,
+    pileCount: gameState.pile.length,
+    lastPlay: gameState.lastPlay ? {
+      playerId: gameState.lastPlay.playerId,
+      count: gameState.lastPlay.count,
+      rank: gameState.lastPlay.rank
+    } : null,
+    pendingWinner: gameState.pendingWinner,
+    log: gameState.log.slice(-24),
+    yourId: id,
+    yourHand: player ? player.hand.map((card, index) => ({card, index})) : []
+  };
+}
+
+function addLog(tag, text, cards) {
+  gameState.log.push({tag: tag || "info", text: text || "", cards: Array.isArray(cards) ? cards.slice() : []});
+  if (gameState.log.length > 80) gameState.log.shift();
+}
+
+function broadcastState() {
+  if (!isHost || !peer || !gameState) return;
+  for (const [id, connection] of Object.entries(connections)) {
+    if (connection?.open) connection.send({type:"state", state:publicStateFor(id)});
+  }
+  gameState.localSnapshot = publicStateFor(peer.id);
+  render();
+}
+
+function getMyState() {
+  return isHost ? gameState?.localSnapshot : gameState;
+}
+
+function addPlayer(id, name) {
+  if (!gameState || gameState.started) return;
+  if (!gameState.players.some(player => player.id === id)) {
+    const safeName = String(name || "").trim().slice(0, 16) ||
+      `Player ${gameState.players.length + 1}`;
+    gameState.players.push({id, name:safeName, hand:[]});
+    gameState.order = gameState.players.map(player => player.id);
+    addLog("info", `<b>${escapeHtml(safeName)}</b> joined the room.`);
+  }
+  broadcastState();
+}
+
+function startGame() {
+  if (!isHost || !gameState) return;
+  if (gameState.players.length < 2) {
+    addLog("info", "At least 2 players are needed to start.");
+    broadcastState();
+    return;
+  }
+
+  const deck = [];
+  for (const suit of SUITS) {
+    for (const rank of RANKS) deck.push(rank + suit);
+  }
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+
+  for (const player of gameState.players) player.hand = [];
+  let index = 0;
+  while (deck.length) {
+    gameState.players[index % gameState.players.length].hand.push(deck.pop());
+    index++;
+  }
+  gameState.players.forEach(player => player.hand.sort());
+
+  gameState.started = true;
+  gameState.order = gameState.players.map(player => player.id);
+  gameState.standings = [];
+  gameState.finishQueue = [];
+  gameState.turn = 0;
+  gameState.pile = [];
+  gameState.claim = null;
+  gameState.lastPlay = null;
+  gameState.passCount = 0;
+  gameState.pendingWinner = null;
+  selected.clear();
+  shownFinishCount = 0;
+  popupQueue = [];
+  addLog("info", `Game started with ${gameState.players.length} players. First player chooses any rank. Max ${MAX_PLAY} cards per turn.`);
+  broadcastState();
+}
+
+function nextTurn() {
+  if (gameState.order.length) {
+    gameState.turn = (gameState.turn + 1) % gameState.order.length;
+  }
+}
+
+// Records a finisher: adds to standings + finishQueue (drives popups),
+// and removes them from the active order.
+function recordFinish(playerId) {
+  const player = playerById(playerId);
+  if (!player) return;
+
+  const place = gameState.standings.length + 1;
+  gameState.standings.push({id: playerId, name: player.name, place});
+  gameState.finishQueue.push({id: playerId, name: player.name, place});
+
+  gameState.order = gameState.order.filter(id => id !== playerId);
+  if (gameState.turn >= gameState.order.length) gameState.turn = 0;
+
+  addLog("finish", `🏁 <b>${escapeHtml(player.name)}</b> finished in <b>${place}${["st","nd","rd"][place-1] || "th"} place</b>!`);
+
+  if (gameState.order.length === 1) {
+    // The last remaining player takes the final place — game over.
+    const lastId = gameState.order[0];
+    const lastPlayer = playerById(lastId);
+    if (lastPlayer) {
+      const lastPlace = place + 1;
+      gameState.standings.push({id: lastId, name: lastPlayer.name, place: lastPlace});
+      gameState.finishQueue.push({id: lastId, name: lastPlayer.name, place: lastPlace});
+      addLog("finish", `🏁 <b>${escapeHtml(lastPlayer.name)}</b> finished in <b>${lastPlace}${["st","nd","rd"][lastPlace-1] || "th"} place</b>.`);
+      gameState.order = [];
+    }
+    addLog("finish", "🏆 <b>The game is complete!</b> All places decided.");
+  }
+}
+
+// Finishes the current claim. roundWinnerId throws the first card of the next claim.
+function finishClaim(roundWinnerId, message) {
+  gameState.claim = null;
+  gameState.lastPlay = null;
+  gameState.passCount = 0;
+  gameState.pendingWinner = null;
+  const idx = gameState.order.indexOf(roundWinnerId);
+  gameState.turn = idx >= 0 ? idx : 0;
+  addLog("info", message);
+}
+
+function handleAction(playerId, message) {
+  if (!isHost || !gameState || !gameState.started) return;
+  if (gameState.order.length < 2) return; // game over — everyone has a place
+
+  const currentId = gameState.order[gameState.turn % gameState.order.length];
+  if (currentId !== playerId) {
+    addLog("info", "Action ignored: it is not that player's turn.");
+    broadcastState();
+    return;
+  }
+
+  const player = playerById(playerId);
+  if (!player) return;
+
+  if (message.type === "play") {
+    if (gameState.pendingWinner) {
+      addLog("info", "Decide whether to doubt or accept the final claim first.");
+      broadcastState();
+      return;
+    }
+
+    let claimedRank = String(message.claimedRank || "").toUpperCase();
+    if (!RANKS.includes(claimedRank)) {
+      addLog("info", "Invalid claim rank.");
+      broadcastState();
+      return;
+    }
+
+    // While a claim is open, the rank is locked — no switching ranks.
+    if (gameState.claim && claimedRank !== gameState.claim.rank) {
+      addLog("info", `Tried to claim ${claimedRank}, but the open claim is ${gameState.claim.rank}.`);
+      broadcastState();
+      return;
+    }
+
+    let indices = Array.isArray(message.indices) ? [...new Set(message.indices)] : [];
+    indices = indices.filter(Number.isInteger).sort((a,b) => b-a);
+
+    if (indices.length < 1 || indices.length > MAX_PLAY ||
+        indices.some(index => index < 0 || index >= player.hand.length)) {
+      addLog("info", `Choose 1–${MAX_PLAY} valid cards.`);
+      broadcastState();
+      return;
+    }
+
+    const cards = indices.map(index => player.hand[index]);
+    for (const index of indices) player.hand.splice(index, 1);
+
+    gameState.pile.push(...cards);
+    gameState.lastPlay = {playerId, count: cards.length, rank: claimedRank, cards};
+    gameState.passCount = 0;
+
+    const cardHtml = cards.map(c =>
+      `<span class="mini-card ${suitOf(c)==="♥"||suitOf(c)==="♦" ? "red" : ""}">${escapeHtml(rankOf(c))}${suitOf(c)}</span>`
+    ).join("");
+
+    if (!gameState.claim) {
+      gameState.claim = {rank: claimedRank, starterId: playerId};
+      addLog("play", `<b>${escapeHtml(player.name)}</b> opened a claim of <b>${claimedRank}</b> with ${cards.length} card(s):`, cards);
+    } else {
+      addLog("play", `<b>${escapeHtml(player.name)}</b> continued <b>${claimedRank}</b> with ${cards.length} card(s):`, cards);
+    }
+
+    if (player.hand.length === 0) {
+      gameState.pendingWinner = playerId;
+      addLog("info", `<b>${escapeHtml(player.name)}</b> has played their last card. The next player must doubt or accept.`);
+    }
+
+    nextTurn();
+    broadcastState();
+    return;
+  }
+
+  if (message.type === "doubt") {
+    if (!gameState.claim || !gameState.lastPlay) {
+      addLog("info", "There is no claim to doubt.");
+      broadcastState();
+      return;
+    }
+
+    const play = gameState.lastPlay;
+    const truthful = play.cards.every(card => rankOf(card) === play.rank);
+    const bluffer = playerById(play.playerId);
+
+    const penalized = playerById(truthful ? playerId : play.playerId);
+    if (!penalized) {
+      addLog("info", "Penalty could not be applied (player not found).");
+      broadcastState();
+      return;
+    }
+
+    const roundWinnerId = truthful ? play.playerId : playerId;
+    const roundWinner = playerById(roundWinnerId);
+
+    addLog("doubt", `<b>${escapeHtml(player.name)}</b> doubted <b>${escapeHtml(bluffer?.name || "?")}</b>'s claim of <b>${play.rank}</b>. The claim was <b>${truthful ? "TRUE ✅" : "A BLUFF ❌"}</b>.`, play.cards);
+
+    if (gameState.pile.length > 0) {
+      const takenCards = gameState.pile.splice(0);
+      penalized.hand.push(...takenCards);
+      penalized.hand.sort();
+      addLog("penalty", `⚠️ The whole pile (${takenCards.length} card(s)) goes to <b>${escapeHtml(penalized.name)}</b>'s hand:`, takenCards);
+    }
+
+    // If the player who emptied their hand gets caught bluffing,
+    // they are NOT out — the pile goes back into their hand and play continues.
+    finishClaim(
+      roundWinnerId,
+      `<b>${escapeHtml(roundWinner?.name || "Player")}</b> wins the round and throws the first card of the next claim — it is their turn.`
+    );
+
+    broadcastState();
+    return;
+  }
+
+  if (message.type === "pass") {
+    if (!gameState.claim) {
+      addLog("info", "There is no claim to accept.");
+      broadcastState();
+      return;
+    }
+
+    if (gameState.pendingWinner) {
+      // The last claim was accepted: the player is officially out.
+      const finisherId = gameState.pendingWinner;
+      gameState.pile = [];
+      gameState.claim = null;
+      gameState.lastPlay = null;
+      gameState.passCount = 0;
+      gameState.pendingWinner = null;
+      recordFinish(finisherId);
+
+      if (gameState.order.length === 0) {
+        addLog("finish", "🏆 <b>The game is complete!</b> All places decided.");
+      } else {
+        // Remaining players continue for the next place. Turn goes to the next player.
+        if (gameState.turn >= gameState.order.length) gameState.turn = 0;
+        const nextPlayer = playerById(gameState.order[gameState.turn]);
+        addLog("info", `The remaining players continue for the next place! <b>${escapeHtml(nextPlayer?.name || "?")}</b> throws the first card of the next claim — it is their turn.`);
+      }
+      broadcastState();
+      return;
+    }
+
+    gameState.passCount++;
+    if (gameState.passCount >= gameState.order.length - 1) {
+      // Everyone else passed: the claim is finished and the pile is removed
+      // from the game. The turn goes to the NEXT player after the passer —
+      // they throw the first card of the next claim.
+      gameState.pile = [];
+      const nextId = gameState.order[(gameState.turn + 1) % gameState.order.length];
+      const nextPlayer = playerById(nextId);
+
+      gameState.claim = null;
+      gameState.lastPlay = null;
+      gameState.passCount = 0;
+      gameState.pendingWinner = null;
+      gameState.turn = gameState.order.indexOf(nextId);
+
+      addLog("info",
+        `Everyone passed. The pile was removed from the game. ` +
+        `<b>${escapeHtml(nextPlayer?.name || "The next player")}</b> throws the first card of the next claim — it is their turn.`
+      );
+    } else {
+      addLog("info", `<b>${escapeHtml(player.name)}</b> passed (accepts the <b>${gameState.claim.rank}</b> claim).`);
+      nextTurn();
+    }
+    broadcastState();
+    return;
+  }
+}
+
+function sendAction(message) {
+  if (isHost) handleAction(peer.id, message);
+  else if (hostConn?.open) hostConn.send(message);
+}
+
+function cardHtml(card, index, isSelected, disabled) {
+  const red = suitOf(card) === "♥" || suitOf(card) === "♦";
+  const rank = rankOf(card);
+  const suit = suitOf(card);
+  return `<button class="card ${red ? "red" : ""} ${isSelected ? "selected" : ""}"
+    data-index="${index}" ${disabled ? "disabled" : ""}
+    aria-pressed="${isSelected}">
+    <span class="corner">${escapeHtml(rank)}</span>
+    <span class="suit">${suit}</span>
+  </button>`;
+}
+
+const PLACE_MEDALS = {1:"🥇", 2:"🥈", 3:"🥉"};
+const PLACE_TROPHIES = {1:"🏆", 2:"🥈", 3:"🥉"};
+const ORDINALS = {1:"1st place", 2:"2nd place", 3:"3rd place"};
+const ordinal = n => ORDINALS[n] || n + "th place";
+
+/* ---- Winner popup queue ----
+   Every finish event (1st, 2nd, 3rd, ...) is queued. Popups are shown
+   one after another so no finish is ever skipped or overwritten. */
+function pumpPopupQueue(state) {
+  if (popupQueue.length) return; // a popup is already on screen
+  const queue = state.finishQueue || [];
+  if (shownFinishCount >= queue.length) return;
+
+  const event = queue[shownFinishCount];
+  shownFinishCount++;
+  const remaining = queue.length - shownFinishCount;
+
+  const isGameOver = (state.order || []).length < 2;
+  const medal = PLACE_TROPHIES[event.place] || "🎖️";
+  $("winTrophy").textContent = medal;
+  $("winTitle").textContent = event.place === 1
+    ? "Congratulations! You are the winner!"
+    : `Congratulations — ${ordinal(event.place)}!`;
+  $("winWho").textContent = `${event.name} ${medal}`;
+  $("winSub").textContent = isGameOver && remaining === 0
+    ? "The game is complete. Final standings:"
+    : `Finished ${ordinal(event.place)}. The remaining players keep playing!`;
+
+  $("winStandings").innerHTML = (state.standings || []).map(entry =>
+    `<li>${PLACE_MEDALS[entry.place] || entry.place + "."} <b>${escapeHtml(entry.name)}</b> — ${ordinal(entry.place)}</li>`
+  ).join("");
+
+  $("popupCount").textContent = remaining > 0
+    ? `${remaining} more announcement${remaining > 1 ? "s" : ""} to show…`
+    : "";
+  $("winOverlay").classList.remove("hidden");
+}
+
+function render() {
+  const state = getMyState();
+  if (!state) return;
+
+  const rankNames = {A:"Aces", J:"Jacks", Q:"Queens", K:"Kings"};
+  const claimLabel = rank => rankNames[rank] || rank;
+
+  $("roomLabel").textContent = state.roomCode;
+
+  const standingFor = id => state.standings.find(entry => entry.id === id) || null;
+  const myStanding = standingFor(state.yourId);
+  const activeOrder = state.order || [];
+  const gameRunning = state.started && activeOrder.length >= 2;
+  const turnPlayer = state.players.find(player => player.id === state.turn);
+  const currentPlayersTurn = state.turn === state.yourId && !myStanding;
+  const pending = state.players.find(player => player.id === state.pendingWinner);
+
+  $("players").innerHTML = state.players.map(player => {
+    const standing = standingFor(player.id);
+    const stillIn = activeOrder.includes(player.id);
+    const medal = standing ? (PLACE_MEDALS[standing.place] || "") : "";
+    return `
+    <div class="player ${stillIn && state.turn === player.id && gameRunning ? "current" : ""} ${standing ? "done" : ""}">
+      <div class="player-name">${escapeHtml(player.name)}${player.id === state.yourId ? " (you)" : ""}
+        <span class="medal">${medal}</span></div>
+      <div class="player-meta">${standing
+        ? `Finished — ${ordinal(standing.place)}`
+        : `${player.count} card(s) in hand`}</div>
+    </div>`;
+  }).join("");
+
+  if (!state.started) {
+    $("turnTitle").textContent = "Waiting in the lobby";
+    $("turnHelp").textContent = isHost
+      ? "At least two players are needed. Start when everyone has joined."
+      : "The host will start when everyone is ready.";
+  } else if (!gameRunning) {
+    $("turnTitle").textContent = "🏁 Game complete!";
+    $("turnHelp").textContent = isHost
+      ? "All places decided. Start a new round when you're ready."
+      : "All places decided. Waiting for the host to start a new round.";
+  } else if (myStanding) {
+    $("turnTitle").textContent = `${PLACE_MEDALS[myStanding.place] || "🎖️"} You finished ${ordinal(myStanding.place)}!`;
+    $("turnHelp").textContent = "Watch the remaining players battle for the next place.";
+  } else if (currentPlayersTurn && pending) {
+    $("turnTitle").textContent = "⚖️ Your decision: doubt or accept";
+    $("turnHelp").textContent = `${pending.name} has played their last card. Doubt the claim or accept it — if you accept, they finish.`;
+  } else if (currentPlayersTurn) {
+    $("turnTitle").textContent = "🎯 Your turn";
+    if (state.claim) {
+      $("turnHelp").textContent = `The ${claimLabel(state.claim.rank)} claim is open — continue it (1–${MAX_PLAY} cards), doubt the last play, or pass.`;
+    } else {
+      $("turnHelp").textContent = `No claim is open. Select 1–${MAX_PLAY} cards, then tap a rank in the panel to start a new claim.`;
+    }
+  } else {
+    $("turnTitle").textContent = `⏳ ${turnPlayer?.name || "Another player"}'s turn`;
+    $("turnHelp").textContent = "Wait for the current player to act.";
+  }
+
+  if (gameRunning) {
+    const lastPlayer = state.lastPlay
+      ? state.players.find(player => player.id === state.lastPlay.playerId)?.name || "a player"
+      : null;
+
+    $("tableInfo").innerHTML =
+      (state.claim
+        ? `<b>🔒 Open claim:</b> <b>${escapeHtml(claimLabel(state.claim.rank))}</b> — everyone must continue this rank until it is finished.<br>`
+        : `<b>No open claim.</b> The next player to play chooses any rank.<br>`) +
+      `<span class="pilecount">Cards on the table: ${state.pileCount}</span>` +
+      (state.lastPlay
+        ? `<br><b>Last play:</b> ${state.lastPlay.count} card(s), claimed as <b>${escapeHtml(claimLabel(state.lastPlay.rank))}</b>, from ${escapeHtml(lastPlayer)}.`
+        : "<br>No cards have been played yet.");
+  } else if (state.started) {
+    const list = state.standings.map(entry =>
+      `${PLACE_MEDALS[entry.place] || entry.place + "."} <b>${escapeHtml(entry.name)}</b> — ${ordinal(entry.place)}`
+    ).join("<br>");
+    $("tableInfo").innerHTML = `<b>Final standings:</b><br>${list}`;
+  } else {
+    $("tableInfo").innerHTML = "The table is empty. Start the game to deal the cards.";
+  }
+
+  const canPlay = gameRunning && !myStanding &&
+    currentPlayersTurn && !state.pendingWinner;
+  const hand = state.yourHand || [];
+
+  $("hand").innerHTML = hand.map(item =>
+    cardHtml(item.card, item.index, selected.has(item.index), !canPlay)
+  ).join("");
+
+  document.querySelectorAll("#hand .card").forEach(button => {
+    button.onclick = () => {
+      const index = Number(button.dataset.index);
+      if (selected.has(index)) selected.delete(index);
+      else if (selected.size < MAX_PLAY) selected.add(index);
+      render();
+    };
+  });
+
+  const rankPanel = $("rankPanel");
+  if (canPlay && !state.claim) {
+    rankPanel.classList.remove("hidden");
+    $("rankGrid").innerHTML = RANKS.map(rank =>
+      `<button class="rank-btn" data-rank="${rank}" ${selected.size < 1 ? "disabled" : ""}>
+        ${rank}${rankNames[rank] ? `<div style="font-size:10px;font-weight:600">${rankNames[rank]}</div>` : ""}
+      </button>`
+    ).join("");
+
+    document.querySelectorAll("#rankGrid .rank-btn").forEach(button => {
+      button.onclick = () => {
+        const rank = button.dataset.rank;
+        if (selected.size < 1) return;
+        const indices = [...selected];
+        selected.clear();
+        sendAction({type:"play", indices, claimedRank: rank});
+      };
+    });
+  } else {
+    rankPanel.classList.add("hidden");
+  }
+
+  $("handHint").textContent = myStanding
+    ? "You have finished. Enjoy watching the rest of the game!"
+    : !state.started
+      ? "Your cards will appear when the host starts the game."
+      : selected.size
+        ? `${selected.size} card(s) selected (max ${MAX_PLAY}).` +
+          (canPlay && !state.claim ? " Now tap a rank in the panel below to throw them." : "")
+        : canPlay
+          ? (state.claim
+              ? `Select 1–${MAX_PLAY} cards to continue the ${claimLabel(state.claim.rank)} claim.`
+              : `Select 1–${MAX_PLAY} cards to start a new claim.`)
+          : "You can act on your turn.";
+
+  let actions = "";
+  if (!state.started) {
+    actions = isHost
+      ? `<button id="startBtn" class="primary" ${state.players.length < 2 ? "disabled" : ""}>▶ Start game</button>`
+      : `<span class="muted">Waiting for the host…</span>`;
+  } else if (!gameRunning) {
+    actions = isHost
+      ? `<button id="restartBtn" class="primary">↻ Start new round</button>`
+      : `<span class="muted">Waiting for the host…</span>`;
+  } else if (myStanding) {
+    actions = `<span class="muted">You finished in ${ordinal(myStanding.place)}. Waiting for the others…</span>`;
+  } else if (currentPlayersTurn && state.pendingWinner) {
+    actions = `<button id="doubtBtn" class="danger">🕵 I doubt it</button>
+               <button id="passBtn" class="primary">✔ Accept — player finishes</button>`;
+  } else if (currentPlayersTurn) {
+    if (state.claim) {
+      actions = `<button id="playBtn" class="primary" ${selected.size < 1 ? "disabled" : ""}>
+          ▶ Continue claim (${claimLabel(state.claim.rank)}) with ${selected.size} card(s)</button>
+        <button id="doubtBtn" class="danger">🕵 I doubt it</button>
+        <button id="passBtn">✔ Pass / accept</button>`;
+    } else {
+      actions = `<span class="muted">Select your card(s) above, then tap a rank in the panel to throw them.</span>`;
+    }
+  } else {
+    actions = `<span class="muted">Waiting for your turn…</span>`;
+  }
+
+  $("actions").innerHTML = actions;
+
+  if ($("startBtn")) $("startBtn").onclick = startGame;
+  if ($("restartBtn")) $("restartBtn").onclick = startGame;
+  if ($("playBtn")) {
+    $("playBtn").onclick = () => {
+      const indices = [...selected];
+      selected.clear();
+      sendAction({type:"play", indices, claimedRank: state.claim.rank});
+    };
+  }
+  if ($("doubtBtn")) $("doubtBtn").onclick = () => {
+    selected.clear();
+    sendAction({type:"doubt"});
+  };
+  if ($("passBtn")) $("passBtn").onclick = () => {
+    selected.clear();
+    sendAction({type:"pass"});
+  };
+
+  // Log with mini cards
+  $("log").innerHTML = (state.log || []).map(entry => {
+    const chips = (entry.cards || []).map(card =>
+      `<span class="mini-card ${suitOf(card)==="♥"||suitOf(card)==="♦" ? "red" : ""}">${escapeHtml(rankOf(card))}${suitOf(card)}</span>`
+    ).join("");
+    return `<div class="log-entry">
+      <span class="log-tag ${escapeHtml(entry.tag || "info")}">${escapeHtml((entry.tag || "info").toUpperCase())}</span>
+      <span>${entry.text}</span>
+      ${chips ? `<span class="mini-cards">${chips}</span>` : ""}
+    </div>`;
+  }).join("");
+  const logBox = $("log");
+  logBox.scrollTop = logBox.scrollHeight;
+
+  // Popup queue: show the next unseen finish event, if any.
+  pumpPopupQueue(state);
+}
+
+$("winCloseBtn").onclick = () => {
+  $("winOverlay").classList.add("hidden");
+  // Immediately show the next queued announcement, if there is one.
+  const state = getMyState();
+  if (state) pumpPopupQueue(state);
+};
+
+function showGame() {
+  $("lobby").classList.add("hidden");
+  $("game").classList.remove("hidden");
+}
+
+$("createBtn").onclick = () => {
+  if (!window.Peer) {
+    $("status").textContent = "PeerJS did not load. Check your internet connection and reload.";
+    return;
+  }
+
+  myName = ($("nameInput").value || "").trim().slice(0,16) || "Host";
+  roomCode = cleanCode($("roomInput").value);
+  if (roomCode.length < 3) roomCode = newRoomCode();
+
+  $("createBtn").disabled = true;
+  $("joinBtn").disabled = true;
+  $("status").textContent = "Creating room…";
+
+  peer = new Peer("tash-" + roomCode, {
+    debug: 0,
+    config: { iceServers: [
+      { urls: "stun:stun.l.google.com:19302" },
+      { urls: "stun:stun1.l.google.com:19302" },
+      { urls: "stun:stun.cloudflare.com:3478" }
+    ]}
+  });
+
+  peer.on("open", () => {
+    isHost = true;
+    gameState = freshGame();
+    addPlayer(peer.id, myName);
+    showGame();
+    $("connectionLabel").textContent = "Host connected";
+    render();
+  });
+
+  peer.on("connection", connection => {
+    connections[connection.peer] = connection;
+
+    connection.on("data", data => {
+      if (!data || typeof data.type !== "string") return;
+      if (data.type === "join") addPlayer(connection.peer, data.name);
+      else handleAction(connection.peer, data);
+    });
+
+    connection.on("close", () => {
+      delete connections[connection.peer];
+      if (gameState && !gameState.started) {
+        gameState.players = gameState.players.filter(player => player.id !== connection.peer);
+        gameState.order = gameState.players.map(player => player.id);
+        addLog("info", "A player left the lobby.");
+        broadcastState();
+      }
+    });
+
+    connection.on("error", () => addLog("info", "A player connection had an error."));
+  });
+
+  peer.on("error", error => {
+    $("status").textContent = `Room error: ${error.type}. Try another room code.`;
+    $("createBtn").disabled = false;
+    $("joinBtn").disabled = false;
+  });
+};
+
+$("joinBtn").onclick = () => {
+  if (!window.Peer) {
+    $("status").textContent = "PeerJS did not load. Check your internet connection and reload.";
+    return;
+  }
+
+  myName = ($("nameInput").value || "").trim().slice(0,16) || "Player";
+  roomCode = cleanCode($("roomInput").value);
+
+  if (roomCode.length < 3) {
+    $("status").textContent = "Enter a room code with at least 3 characters.";
+    return;
+  }
+
+  $("createBtn").disabled = true;
+  $("joinBtn").disabled = true;
+  $("status").textContent = "Connecting to room…";
+
+  peer = new Peer({
+    debug: 0,
+    config: { iceServers: [
+      { urls: "stun:stun.l.google.com:19302" },
+      { urls: "stun:stun1.l.google.com:19302" },
+      { urls: "stun:stun.cloudflare.com:3478" }
+    ]}
+  });
+
+  peer.on("open", () => {
+    hostConn = peer.connect("tash-" + roomCode, {reliable:true});
+
+    hostConn.on("open", () => {
+      hostConn.send({type:"join", name:myName});
+      showGame();
+      $("roomLabel").textContent = roomCode;
+      $("connectionLabel").textContent = "Connecting";
+      $("turnTitle").textContent = "Joining room…";
+      $("turnHelp").textContent = "Waiting for the host to send game information.";
+    });
+
+    hostConn.on("data", data => {
+      if (data?.type === "state") {
+        gameState = data.state;
+        $("connectionLabel").textContent = "Connected";
+        render();
+      }
+    });
+
+    hostConn.on("close", () => {
+      $("connectionLabel").textContent = "Disconnected";
+      $("turnTitle").textContent = "Disconnected from host";
+      $("turnHelp").textContent = "The host connection ended. Reload to rejoin.";
+    });
+
+    hostConn.on("error", () => {
+      $("status").textContent = "Could not connect to the host. Check the room code.";
+    });
+  });
+
+  peer.on("error", error => {
+    $("status").textContent = `Connection error: ${error.type}. Check the room code and internet connection.`;
+    $("createBtn").disabled = false;
+    $("joinBtn").disabled = false;
+  });
+};
+</script>
+</body>
+</html>
