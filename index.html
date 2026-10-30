@@ -8,530 +8,238 @@
   :root {
     color-scheme: dark;
     --bg: #071711;
-    --felt: #14513b;
-    --felt-dark: #0c3528;
-    --panel: rgba(16, 31, 29, .88);
-    --line: rgba(196, 232, 204, .16);
+    --panel: rgba(16,31,29,.88);
+    --line: rgba(196,232,204,.16);
     --text: #f2f7f3;
     --muted: #a8bdb0;
     --accent: #70f0c1;
     --gold: #ffd77a;
     --danger: #ff8585;
-    --bar-height: 68px;
   }
 
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-  html, body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-  }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { width:100%; height:100%; margin:0; }
 
   body {
-    height: 100dvh;
-    overflow: hidden;
-    padding: 8px 10px calc(var(--bar-height) + env(safe-area-inset-bottom) + 8px);
-    color: var(--text);
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    height:100dvh;
+    overflow:hidden;
+    padding:8px 10px calc(68px + env(safe-area-inset-bottom) + 8px);
+    color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
     background:
-      radial-gradient(ellipse at 50% 35%, rgba(35, 108, 75, .38), transparent 48%),
+      radial-gradient(ellipse at 50% 35%, rgba(35,108,75,.38), transparent 48%),
       radial-gradient(ellipse at 0% 0%, #183e30, transparent 45%),
-      linear-gradient(150deg, #071711, #10271f 55%, #081711);
+      linear-gradient(150deg,#071711,#10271f 55%,#081711);
   }
 
-  button, input { font: inherit; }
-
+  button,input { font:inherit; }
   button {
-    min-height: 42px;
-    padding: 8px 12px;
-    color: var(--text);
-    font-weight: 750;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    background: rgba(255,255,255,.08);
-    cursor: pointer;
-    touch-action: manipulation;
+    min-height:42px; padding:8px 12px; color:var(--text); font-weight:750;
+    border:1px solid var(--line); border-radius:12px;
+    background:rgba(255,255,255,.08); cursor:pointer; touch-action:manipulation;
   }
-
-  button:active:not(:disabled) { transform: scale(.98); }
-  button:disabled { opacity: .42; cursor: not-allowed; }
-
+  button:active:not(:disabled) { transform:scale(.98); }
+  button:disabled { opacity:.42; cursor:not-allowed; }
   button.primary {
-    color: #06281e;
-    border-color: transparent;
-    background: linear-gradient(135deg, #75f0c1, #46c9a2);
+    color:#06281e; border-color:transparent;
+    background:linear-gradient(135deg,#75f0c1,#46c9a2);
   }
-
   button.danger {
-    color: #ffe6e6;
-    border-color: rgba(255,133,133,.4);
-    background: linear-gradient(135deg, #74323b, #52242e);
+    color:#ffe6e6; border-color:rgba(255,133,133,.4);
+    background:linear-gradient(135deg,#74323b,#52242e);
   }
-
   input {
-    width: min(100%, 250px);
-    min-height: 46px;
-    padding: 10px 13px;
-    color: var(--text);
-    font-size: 16px;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    background: rgba(0,0,0,.25);
+    width:min(100%,250px); min-height:46px; padding:10px 13px;
+    color:var(--text); font-size:16px; border:1px solid var(--line);
+    border-radius:12px; background:rgba(0,0,0,.25);
   }
 
   .app {
-    width: min(920px, 100%);
-    height: 100%;
-    min-height: 0;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
+    width:min(920px,100%); height:100%; min-height:0; margin:0 auto;
+    display:flex; flex-direction:column;
   }
-
   h1 {
-    flex: 0 0 auto;
-    margin: 2px 0;
-    color: #b8ffdc;
-    font-size: clamp(21px, 5vw, 30px);
-    letter-spacing: .6px;
-    text-shadow: 0 2px 18px rgba(87, 240, 183, .18);
+    flex:0 0 auto; margin:2px 0; color:#b8ffdc;
+    font-size:clamp(21px,5vw,30px); letter-spacing:.6px;
+    text-shadow:0 2px 18px rgba(87,240,183,.18);
   }
-
-  .subtitle {
-    flex: 0 0 auto;
-    margin: 0 0 5px;
-    color: var(--muted);
-    font-size: 12px;
-  }
-
+  .subtitle { flex:0 0 auto; margin:0 0 5px; color:var(--muted); font-size:12px; }
   .panel {
-    margin: 4px 0;
-    padding: 9px 11px;
-    border: 1px solid var(--line);
-    border-radius: 15px;
-    background: var(--panel);
-    box-shadow: 0 8px 20px rgba(0,0,0,.14);
-    backdrop-filter: blur(8px);
+    margin:4px 0; padding:9px 11px; border:1px solid var(--line);
+    border-radius:15px; background:var(--panel);
+    box-shadow:0 8px 20px rgba(0,0,0,.14); backdrop-filter:blur(8px);
   }
-
   .section-title {
-    margin: 0 0 6px;
-    color: #a9cdb8;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 1.3px;
-    text-transform: uppercase;
+    margin:0 0 6px; color:#a9cdb8; font-size:10px;
+    font-weight:800; letter-spacing:1.3px; text-transform:uppercase;
   }
-
-  .row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-
-  .hidden { display: none !important; }
-  .muted { color: var(--muted); }
-
-  #status {
-    margin-top: 9px;
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.4;
-  }
-
-  #status.error { color: var(--danger); }
-
+  .row { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px; }
+  .hidden { display:none !important; }
+  .muted { color:var(--muted); }
+  #status { margin-top:9px; color:var(--muted); font-size:13px; line-height:1.4; }
+  #status.error { color:var(--danger); }
   .spinner {
-    display: inline-block;
-    width: 13px;
-    height: 13px;
-    margin-right: 6px;
-    vertical-align: -2px;
-    border: 2px solid var(--line);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin .8s linear infinite;
+    display:inline-block; width:13px; height:13px; margin-right:6px; vertical-align:-2px;
+    border:2px solid var(--line); border-top-color:var(--accent); border-radius:50%;
+    animation:spin .8s linear infinite;
   }
+  @keyframes spin { to { transform:rotate(360deg); } }
 
-  @keyframes spin { to { transform: rotate(360deg); } }
+  #lobby { width:min(550px,100%); margin:auto; }
+  body.lobby-mode .app { justify-content:center; transform:translateY(clamp(16px,5vh,48px)); }
+  body.lobby-mode h1, body.lobby-mode .subtitle,
+  body.game-mode h1, body.game-mode .subtitle { width:100%; text-align:center; }
 
-  #lobby {
-    width: min(550px, 100%);
-    margin: auto;
-  }
-
-  body.lobby-mode .app {
-    justify-content: center;
-    transform: translateY(clamp(16px, 5vh, 48px));
-  }
-
-  body.lobby-mode h1,
-  body.lobby-mode .subtitle {
-    width: 100%;
-    text-align: center;
-  }
-
-  body.game-mode h1,
-  body.game-mode .subtitle {
-    width: 100%;
-    text-align: center;
-  }
-
-  .roomline {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 5px;
-  }
-
+  .roomline { display:flex; flex-wrap:wrap; justify-content:space-between; gap:5px; }
   .pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 4px 9px;
-    color: #c1d3c8;
-    font-size: 11px;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    background: rgba(255,255,255,.035);
+    display:inline-flex; align-items:center; gap:5px; padding:4px 9px;
+    color:#c1d3c8; font-size:11px; border:1px solid var(--line);
+    border-radius:999px; background:rgba(255,255,255,.035);
   }
-
   .turnbox {
-    margin-top: 6px;
-    padding: 7px 10px;
-    border: 1px solid rgba(112,240,193,.24);
-    border-radius: 11px;
-    background: linear-gradient(135deg, rgba(80,190,142,.14), rgba(255,255,255,.025));
+    margin-top:6px; padding:7px 10px;
+    border:1px solid rgba(112,240,193,.24); border-radius:11px;
+    background:linear-gradient(135deg,rgba(80,190,142,.14),rgba(255,255,255,.025));
   }
-
-  .turnbox strong {
-    display: block;
-    font-size: clamp(14px, 3.5vw, 18px);
-  }
-
-  #turnHelp { font-size: 11px; line-height: 1.3; }
-
+  .turnbox strong { display:block; font-size:clamp(14px,3.5vw,18px); }
+  #turnHelp { font-size:11px; line-height:1.3; }
   #players {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
-    gap: 5px;
-    margin-top: 6px;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr));
+    gap:5px; margin-top:6px;
   }
-
-  .player {
-    padding: 5px 7px;
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    background: rgba(255,255,255,.035);
-  }
-
-  .player.current {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 1px rgba(112,240,193,.7), 0 0 12px rgba(112,240,193,.12);
-  }
-
-  .player.done { opacity: .6; }
-  .player-name { font-size: 11px; font-weight: 750; }
-  .player-meta { margin-top: 2px; color: var(--muted); font-size: 10px; }
+  .player { padding:5px 7px; border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.035); }
+  .player.current { border-color:var(--accent); box-shadow:0 0 0 1px rgba(112,240,193,.7),0 0 12px rgba(112,240,193,.12); }
+  .player.done { opacity:.6; }
+  .player-name { font-size:11px; font-weight:750; }
+  .player-meta { margin-top:2px; color:var(--muted); font-size:10px; }
 
   #game {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
+    flex:1 1 auto; min-height:0; display:flex; flex-direction:column;
+    overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin;
   }
+  #game .panel { flex:0 0 auto; }
 
-  #game .panel { flex: 0 0 auto; }
-
-  /* Felt table and face-down cards */
   .table-panel {
-    position: relative;
-    min-height: 140px;
-    overflow: hidden;
-    border-color: rgba(125, 220, 170, .25);
-    background:
-      radial-gradient(ellipse at center, rgba(76, 167, 111, .2), transparent 72%),
-      rgba(9, 31, 24, .9);
+    position:relative; min-height:140px; overflow:hidden;
+    border-color:rgba(125,220,170,.25);
+    background:radial-gradient(ellipse at center,rgba(76,167,111,.2),transparent 72%),rgba(9,31,24,.9);
   }
-
   .table-surface {
-    position: relative;
-    min-height: 97px;
-    margin-top: 3px;
-    padding: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    border: 3px solid rgba(118, 190, 141, .36);
-    border-radius: 50% / 42%;
-    background:
-      radial-gradient(ellipse at center, #1b6848, #11452f 72%, #0e3929);
-    box-shadow:
-      inset 0 0 24px rgba(0,0,0,.37),
-      0 5px 14px rgba(0,0,0,.2);
+    position:relative; min-height:97px; margin-top:3px; padding:8px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px;
+    border:3px solid rgba(118,190,141,.36); border-radius:50% / 42%;
+    background:radial-gradient(ellipse at center,#1b6848,#11452f 72%,#0e3929);
+    box-shadow:inset 0 0 24px rgba(0,0,0,.37),0 5px 14px rgba(0,0,0,.2);
   }
-
   .table-mark {
-    position: absolute;
-    color: rgba(219, 255, 231, .18);
-    font-size: 10px;
-    font-weight: 900;
-    letter-spacing: 2px;
-    pointer-events: none;
+    position:absolute; color:rgba(219,255,231,.18); font-size:10px;
+    font-weight:900; letter-spacing:2px; pointer-events:none;
   }
-
   #tableClaim {
-    z-index: 1;
-    max-width: 90%;
-    color: #fff2c4;
-    font-size: 11px;
-    font-weight: 750;
-    text-align: center;
-    text-shadow: 0 1px 4px #10281c;
+    z-index:1; max-width:90%; color:#fff2c4; font-size:11px;
+    font-weight:750; text-align:center; text-shadow:0 1px 4px #10281c;
   }
-
   #tableCards {
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 4px;
-    min-height: 39px;
+    z-index:1; min-height:39px; display:flex; align-items:center;
+    justify-content:center; flex-wrap:wrap; gap:4px;
   }
-
   .played-card {
-    width: 27px;
-    height: 38px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #eefff6;
-    font-size: 18px;
-    border: 1px solid rgba(255,255,255,.7);
-    border-radius: 6px;
-    background:
-      repeating-linear-gradient(45deg, #34644f 0 4px, #244b3d 4px 8px);
-    box-shadow: 0 3px 7px rgba(0,0,0,.35);
-    transform: rotate(var(--tilt, 0deg));
+    width:27px; height:38px; display:inline-flex; align-items:center; justify-content:center;
+    color:#eefff6; font-size:18px; border:1px solid rgba(255,255,255,.7);
+    border-radius:6px; background:repeating-linear-gradient(45deg,#34644f 0 4px,#244b3d 4px 8px);
+    box-shadow:0 3px 7px rgba(0,0,0,.35); transform:rotate(var(--tilt,0deg));
   }
+  #tableCount { z-index:1; color:#c3e8d3; font-size:10px; text-align:center; }
 
-  #tableCount {
-    z-index: 1;
-    color: #c3e8d3;
-    font-size: 10px;
-    text-align: center;
-  }
-
-  #hand {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 6px;
-    margin: 5px 0 3px;
-  }
-
+  #hand { display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin:5px 0 3px; }
   .card {
-    position: relative;
-    flex: 0 0 auto;
-    width: clamp(42px, 10.5vw, 58px);
-    height: clamp(58px, 15vw, 78px);
-    padding: 0;
-    color: #1b2630;
-    font-size: 16px;
-    font-weight: 850;
-    border: 2px solid rgba(255,255,255,.82);
-    border-radius: 9px;
-    background: linear-gradient(155deg, #fff, #e6eee9);
-    box-shadow: 0 3px 8px rgba(0,0,0,.35);
+    position:relative; flex:0 0 auto; width:clamp(42px,10.5vw,58px);
+    height:clamp(58px,15vw,78px); padding:0; color:#1b2630;
+    font-size:16px; font-weight:850; border:2px solid rgba(255,255,255,.82);
+    border-radius:9px; background:linear-gradient(155deg,#fff,#e6eee9);
+    box-shadow:0 3px 8px rgba(0,0,0,.35);
   }
-
-  .card.red { color: #ce3348; }
-  .card .corner { position: absolute; top: 4px; left: 6px; }
-  .card .suit { position: absolute; right: 6px; bottom: 3px; font-size: 20px; }
-  .card.selected { outline: 3px solid var(--accent); transform: translateY(-4px); }
-  .card:disabled { opacity: .55; }
-
-  .hint { min-height: 15px; color: var(--muted); font-size: 11px; }
+  .card.red { color:#ce3348; }
+  .card .corner { position:absolute; top:4px; left:6px; }
+  .card .suit { position:absolute; right:6px; bottom:3px; font-size:20px; }
+  .card.selected { outline:3px solid var(--accent); transform:translateY(-4px); }
+  .card:disabled { opacity:.55; }
+  .hint { min-height:15px; color:var(--muted); font-size:11px; }
 
   #rankPanel {
-    margin-top: 5px;
-    padding: 7px;
-    border: 1px solid rgba(112,240,193,.35);
-    border-radius: 11px;
-    background: rgba(6, 25, 18, .94);
+    margin-top:5px; padding:7px; border:1px solid rgba(112,240,193,.35);
+    border-radius:11px; background:rgba(6,25,18,.94);
   }
+  #rankPanel b { display:block; margin-bottom:5px; color:var(--accent); font-size:11px; }
+  #rankGrid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:5px; }
+  .rank-btn { min-width:0; min-height:37px; padding:3px 1px; border-radius:8px; font-size:14px; }
+  .rank-btn small { display:block; font-size:7px; line-height:1; }
 
-  #rankPanel b {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--accent);
-    font-size: 11px;
-  }
-
-  #rankGrid {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0,1fr));
-    gap: 5px;
-  }
-
-  .rank-btn {
-    min-width: 0;
-    min-height: 37px;
-    padding: 3px 1px;
-    border-radius: 8px;
-    font-size: 14px;
-  }
-
-  .rank-btn small {
-    display: block;
-    font-size: 7px;
-    line-height: 1;
-  }
-
-  #logPanel { padding-top: 7px; padding-bottom: 7px; }
-
-  #log {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
+  #logPanel { padding-top:7px; padding-bottom:7px; }
+  #log { display:flex; flex-direction:column; gap:2px; }
   .log-entry {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 2px;
-    color: var(--muted);
-    font-size: 10px;
-    line-height: 1.25;
-    border-bottom: 1px solid rgba(255,255,255,.06);
+    display:flex; flex-wrap:wrap; align-items:center; gap:4px;
+    padding:3px 2px; color:var(--muted); font-size:10px; line-height:1.25;
+    border-bottom:1px solid rgba(255,255,255,.06);
   }
-
-  .log-entry b { color: var(--text); }
-
-  .log-tag {
-    flex: 0 0 auto;
-    padding: 1px 5px;
-    border-radius: 5px;
-    font-size: 8px;
-    font-weight: 850;
-  }
-
-  .log-tag.play { color: var(--accent); background: rgba(112,240,193,.14); }
-  .log-tag.doubt { color: var(--danger); background: rgba(255,133,133,.14); }
-  .log-tag.penalty, .log-tag.finish { color: var(--gold); background: rgba(255,215,122,.14); }
-  .log-tag.info { color: #adcfff; background: rgba(125,178,255,.13); }
-
-  .mini-cards { display: inline-flex; flex-wrap: wrap; gap: 2px; }
+  .log-entry b { color:var(--text); }
+  .log-tag { flex:0 0 auto; padding:1px 5px; border-radius:5px; font-size:8px; font-weight:850; }
+  .log-tag.play { color:var(--accent); background:rgba(112,240,193,.14); }
+  .log-tag.doubt { color:var(--danger); background:rgba(255,133,133,.14); }
+  .log-tag.penalty,.log-tag.finish { color:var(--gold); background:rgba(255,215,122,.14); }
+  .log-tag.info { color:#adcfff; background:rgba(125,178,255,.13); }
+  .mini-cards { display:inline-flex; flex-wrap:wrap; gap:2px; }
   .mini-card {
-    width: 18px;
-    height: 24px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #f2fff8;
-    font-size: 9px;
-    border: 1px solid rgba(255,255,255,.65);
-    border-radius: 4px;
-    background: repeating-linear-gradient(45deg,#34644f 0 3px,#244b3d 3px 6px);
+    width:18px; height:24px; display:inline-flex; align-items:center; justify-content:center;
+    color:#f2fff8; font-size:9px; border:1px solid rgba(255,255,255,.65);
+    border-radius:4px; background:repeating-linear-gradient(45deg,#34644f 0 3px,#244b3d 3px 6px);
   }
 
   #actions {
-    position: fixed;
-    z-index: 30;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    padding: 7px 10px calc(7px + env(safe-area-inset-bottom));
-    border-top: 1px solid var(--line);
-    background: rgba(7, 23, 17, .97);
-    backdrop-filter: blur(12px);
+    position:fixed; z-index:30; right:0; bottom:0; left:0;
+    padding:7px 10px calc(7px + env(safe-area-inset-bottom));
+    border-top:1px solid var(--line); background:rgba(7,23,17,.97); backdrop-filter:blur(12px);
   }
-
-  #actions .wrap {
-    width: min(920px, 100%);
-    margin: 0 auto;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  #actions button {
-    flex: 1 1 28%;
-    min-height: 42px;
-    padding: 7px 8px;
-    font-size: 13px;
-  }
-
-  #actions .muted {
-    flex: 1 1 100%;
-    text-align: center;
-    font-size: 11px;
-  }
+  #actions .wrap { width:min(920px,100%); margin:0 auto; display:flex; flex-wrap:wrap; gap:6px; }
+  #actions button { flex:1 1 28%; min-height:42px; padding:7px 8px; font-size:13px; }
+  #actions .muted { flex:1 1 100%; text-align:center; font-size:11px; }
 
   #winOverlay {
-    position: fixed;
-    z-index: 50;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 14px;
-    background: rgba(4,8,16,.86);
-    backdrop-filter: blur(6px);
+    position:fixed; z-index:50; inset:0; display:flex; align-items:center;
+    justify-content:center; padding:14px; background:rgba(4,8,16,.86); backdrop-filter:blur(6px);
   }
-
   .win-card {
-    width: min(420px, 100%);
-    max-height: 90dvh;
-    overflow-y: auto;
-    padding: 22px 18px;
-    border: 2px solid var(--gold);
-    border-radius: 18px;
-    background: linear-gradient(160deg,#1b2a45,#2a1f3d);
-    text-align: center;
+    width:min(420px,100%); max-height:90dvh; overflow-y:auto; padding:22px 18px;
+    border:2px solid var(--gold); border-radius:18px;
+    background:linear-gradient(160deg,#1b2a45,#2a1f3d); text-align:center;
+  }
+  .win-card .trophy { font-size:40px; }
+  .win-card h2 { color:var(--gold); font-size:19px; }
+  .win-card .who { font-size:17px; font-weight:800; }
+  .win-card .sub,.popup-count { color:var(--muted); font-size:12px; }
+  .standings { padding:0; list-style:none; text-align:left; }
+  .standings li { padding:6px 8px; border-bottom:1px solid rgba(255,255,255,.1); }
+
+  @media (max-width:520px) {
+    #players { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .table-panel { min-height:125px; }
+    .table-surface { min-height:82px; }
+    #rankGrid { gap:4px; }
   }
 
-  .win-card .trophy { font-size: 40px; }
-  .win-card h2 { color: var(--gold); font-size: 19px; }
-  .win-card .who { font-size: 17px; font-weight: 800; }
-  .win-card .sub, .popup-count { color: var(--muted); font-size: 12px; }
-  .standings { padding: 0; list-style: none; text-align: left; }
-  .standings li { padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,.1); }
-
-  @media (max-width: 520px) {
-    #players { grid-template-columns: repeat(2, minmax(0,1fr)); }
-    .table-panel { min-height: 125px; }
-    .table-surface { min-height: 82px; }
-    #rankGrid { gap: 4px; }
+  @media (max-height:680px) {
+    .panel { margin:3px 0; padding:7px 9px; }
+    h1 { font-size:20px; }
+    .subtitle { margin-bottom:2px; }
+    .table-panel { min-height:110px; }
+    .table-surface { min-height:70px; }
+    .card { height:54px; }
+    .rank-btn { min-height:33px; }
+    #players { gap:3px; margin-top:4px; }
   }
 
-  @media (max-height: 680px) {
-    .panel { margin: 3px 0; padding: 7px 9px; }
-    h1 { font-size: 20px; }
-    .subtitle { margin-bottom: 2px; }
-    .table-panel { min-height: 110px; }
-    .table-surface { min-height: 70px; }
-    .card { height: 54px; }
-    .rank-btn { min-height: 33px; }
-    #players { gap: 3px; margin-top: 4px; }
-  }
-
-  @media (max-height: 520px) {
-    body.lobby-mode .app {
-      justify-content: flex-start;
-      transform: none;
-    }
+  @media (max-height:520px) {
+    body.lobby-mode .app { justify-content:flex-start; transform:none; }
   }
 </style>
 </head>
@@ -630,20 +338,12 @@ let selected = new Set();
 let shownFinishCount = 0;
 let lastActionAt = {};
 
-const SIGNALING_SERVERS = [
-  {},
-  { host: "0.peerjs.com", port: 443, secure: true, path: "/" }
-];
-
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, ch => ({
   "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
 }[ch]));
 
 function sanitizeName(value, fallback) {
-  const clean = String(value || "")
-    .replace(/[^\p{L}\p{N} _-]/gu, "")
-    .trim()
-    .slice(0,16);
+  const clean = String(value || "").replace(/[^\p{L}\p{N} _-]/gu, "").trim().slice(0,16);
   return clean || fallback;
 }
 
@@ -668,25 +368,14 @@ const roomPeerId = code => "tash-" + code;
 
 function peerConfig() {
   return {
-    debug: 1,
-    ...SIGNALING_SERVERS[0],
-    config: {
-      iceServers: [
-        { urls: "stun:stun.l.google.com:19302" },
-        { urls: "stun:stun1.l.google.com:19302" },
-        { urls: "stun:stun.cloudflare.com:3478" },
-        {
-          urls: "turn:openrelay.metered.ca:443",
-          username: "openrelayproject",
-          credential: "openrelayproject"
-        },
-        {
-          urls: "turn:openrelay.metered.ca:443?transport=tcp",
-          username: "openrelayproject",
-          credential: "openrelayproject"
-        }
-      ]
-    }
+    debug:1,
+    config:{iceServers:[
+      {urls:"stun:stun.l.google.com:19302"},
+      {urls:"stun:stun1.l.google.com:19302"},
+      {urls:"stun:stun.cloudflare.com:3478"},
+      {urls:"turn:openrelay.metered.ca:443",username:"openrelayproject",credential:"openrelayproject"},
+      {urls:"turn:openrelay.metered.ca:443?transport=tcp",username:"openrelayproject",credential:"openrelayproject"}
+    ]}
   };
 }
 
@@ -709,24 +398,18 @@ function publicStateFor(id) {
   return {
     roomCode,
     started:gameState.started,
-    players:gameState.players.map(player => ({
-      id:player.id, name:player.name, count:player.hand.length
-    })),
+    players:gameState.players.map(player => ({id:player.id,name:player.name,count:player.hand.length})),
     order:gameState.order.slice(),
     standings:gameState.standings.slice(),
     finishQueue:gameState.finishQueue.slice(),
     turn:turnId,
-    claim:gameState.claim
-      ? {rank:gameState.claim.rank, starterId:gameState.claim.starterId}
-      : null,
+    claim:gameState.claim ? {rank:gameState.claim.rank,starterId:gameState.claim.starterId} : null,
     pileCount:gameState.pile.length,
-    lastPlay:gameState.lastPlay
-      ? {
-          playerId:gameState.lastPlay.playerId,
-          count:gameState.lastPlay.count,
-          rank:gameState.lastPlay.rank
-        }
-      : null,
+    lastPlay:gameState.lastPlay ? {
+      playerId:gameState.lastPlay.playerId,
+      count:gameState.lastPlay.count,
+      rank:gameState.lastPlay.rank
+    } : null,
     pendingWinner:gameState.pendingWinner,
     log:gameState.log.slice(-2),
     yourId:id,
@@ -735,7 +418,7 @@ function publicStateFor(id) {
 }
 
 function addLog(tag, text) {
-  gameState.log.push({tag:tag || "info", text:text || ""});
+  gameState.log.push({tag:tag || "info",text:text || ""});
   if (gameState.log.length > 80) gameState.log.shift();
 }
 
@@ -744,8 +427,8 @@ function broadcastState() {
 
   for (const [id, connection] of Object.entries(connections)) {
     if (connection?.open) {
-      try { connection.send({type:"state", state:publicStateFor(id)}); }
-      catch (error) { console.warn("Unable to send game state", error); }
+      try { connection.send({type:"state",state:publicStateFor(id)}); }
+      catch (error) { console.warn("Unable to send state",error); }
     }
   }
 
@@ -759,10 +442,10 @@ function addPlayer(id, name) {
   if (!gameState || gameState.started || gameState.players.length >= MAX_PLAYERS) return;
 
   if (!gameState.players.some(player => player.id === id)) {
-    const safeName = sanitizeName(name, `Player ${gameState.players.length + 1}`);
-    gameState.players.push({id, name:safeName, hand:[]});
+    const safeName = sanitizeName(name,`Player ${gameState.players.length + 1}`);
+    gameState.players.push({id,name:safeName,hand:[]});
     gameState.order = gameState.players.map(player => player.id);
-    addLog("info", `<b>${escapeHtml(safeName)}</b> joined the room.`);
+    addLog("info",`<b>${escapeHtml(safeName)}</b> joined the room.`);
   }
 
   broadcastState();
@@ -778,9 +461,7 @@ function startGame() {
   }
 
   const deck = [];
-  for (const suit of SUITS) {
-    for (const rank of RANKS) deck.push(rank + suit);
-  }
+  for (const suit of SUITS) for (const rank of RANKS) deck.push(rank + suit);
 
   for (let i = deck.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -794,10 +475,9 @@ function startGame() {
     gameState.players[i % gameState.players.length].hand.push(deck.pop());
     i++;
   }
-
   gameState.players.forEach(player => player.hand.sort());
 
-  Object.assign(gameState, {
+  Object.assign(gameState,{
     started:true,
     order:gameState.players.map(player => player.id),
     standings:[],
@@ -812,14 +492,12 @@ function startGame() {
 
   selected.clear();
   shownFinishCount = 0;
-  addLog("info", `Game started with ${gameState.players.length} players. Max ${MAX_PLAY} cards per turn.`);
+  addLog("info",`Game started with ${gameState.players.length} players. Max ${MAX_PLAY} cards per turn.`);
   broadcastState();
 }
 
 function nextTurn() {
-  if (gameState.order.length) {
-    gameState.turn = (gameState.turn + 1) % gameState.order.length;
-  }
+  if (gameState.order.length) gameState.turn = (gameState.turn + 1) % gameState.order.length;
 }
 
 function recordFinish(playerId) {
@@ -833,7 +511,7 @@ function recordFinish(playerId) {
 
   if (gameState.turn >= gameState.order.length) gameState.turn = 0;
 
-  addLog("finish", `🏁 <b>${escapeHtml(player.name)}</b> finished in <b>${place}${["st","nd","rd"][place-1] || "th"} place</b>!`);
+  addLog("finish",`🏁 <b>${escapeHtml(player.name)}</b> finished in <b>${place}${["st","nd","rd"][place-1] || "th"} place</b>!`);
 
   if (gameState.order.length === 1) {
     const last = playerById(gameState.order[0]);
@@ -842,7 +520,7 @@ function recordFinish(playerId) {
       const lastPlace = place + 1;
       gameState.standings.push({id:last.id,name:last.name,place:lastPlace});
       gameState.finishQueue.push({id:last.id,name:last.name,place:lastPlace});
-      addLog("finish", `🏁 <b>${escapeHtml(last.name)}</b> finished in <b>${lastPlace}${["st","nd","rd"][lastPlace-1] || "th"} place</b>.`);
+      addLog("finish",`🏁 <b>${escapeHtml(last.name)}</b> finished in <b>${lastPlace}${["st","nd","rd"][lastPlace-1] || "th"} place</b>.`);
     }
 
     gameState.order = [];
@@ -884,11 +562,8 @@ function handleAction(playerId, message) {
     let indices = Array.isArray(message.indices) ? [...new Set(message.indices)] : [];
     indices = indices.filter(Number.isInteger).sort((a,b) => b-a);
 
-    if (
-      indices.length < 1 ||
-      indices.length > MAX_PLAY ||
-      indices.some(index => index < 0 || index >= player.hand.length)
-    ) {
+    if (indices.length < 1 || indices.length > MAX_PLAY ||
+        indices.some(index => index < 0 || index >= player.hand.length)) {
       addLog("info",`Choose 1–${MAX_PLAY} valid cards.`);
       broadcastState();
       return;
@@ -898,9 +573,7 @@ function handleAction(playerId, message) {
     indices.forEach(index => player.hand.splice(index,1));
 
     gameState.pile.push(...cards);
-    gameState.lastPlay = {
-      playerId, count:cards.length, rank:claimedRank, cards
-    };
+    gameState.lastPlay = {playerId,count:cards.length,rank:claimedRank,cards};
     gameState.passCount = 0;
 
     const verb = gameState.claim ? "continued" : "claimed";
@@ -908,15 +581,13 @@ function handleAction(playerId, message) {
       '<span class="mini-card">🂠</span>'.repeat(cards.length) +
       "</span>";
 
-    addLog("play", `<b>${escapeHtml(player.name)}</b> ${verb} <b>${claimedRank}</b> ×${cards.length} — face down. ${backs}`);
+    addLog("play",`<b>${escapeHtml(player.name)}</b> ${verb} <b>${claimedRank}</b> ×${cards.length} — face down. ${backs}`);
 
-    if (!gameState.claim) {
-      gameState.claim = {rank:claimedRank, starterId:playerId};
-    }
+    if (!gameState.claim) gameState.claim = {rank:claimedRank,starterId:playerId};
 
     if (player.hand.length === 0) {
       gameState.pendingWinner = playerId;
-      addLog("info", `<b>${escapeHtml(player.name)}</b> played their last card. The next player must doubt or accept.`);
+      addLog("info",`<b>${escapeHtml(player.name)}</b> played their last card. The next player must doubt or accept.`);
     }
 
     nextTurn();
@@ -932,8 +603,14 @@ function handleAction(playerId, message) {
     }
 
     const play = gameState.lastPlay;
+
+    // Evaluate the exact cards from the most recent play.
     const truthful = play.cards.every(card => rankOf(card) === play.rank);
-    const bluffer = playerById(play.playerId);
+    const claimant = playerById(play.playerId);
+
+    // Correct rule:
+    // If the claim was false, penalize the claimant.
+    // If the claim was true, penalize the doubter.
     const penalized = playerById(truthful ? playerId : play.playerId);
 
     if (!penalized) {
@@ -941,17 +618,40 @@ function handleAction(playerId, message) {
       return;
     }
 
-    const roundWinnerId = truthful ? play.playerId : playerId;
-    const roundWinner = playerById(roundWinnerId);
+    const revealedCards = play.cards.map(card => {
+      const red = suitOf(card) === "♥" || suitOf(card) === "♦";
+      return `<span class="mini-card ${red ? "red" : ""}">${escapeHtml(card)}</span>`;
+    }).join("");
 
-    addLog("doubt", `<b>${escapeHtml(player.name)}</b> doubted <b>${escapeHtml(bluffer?.name || "?")}</b>'s claim of <b>${escapeHtml(play.rank)}</b> — it was <b>${truthful ? "TRUE ✅" : "A BLUFF ❌"}</b>.`);
+    if (truthful) {
+      addLog("doubt",
+        `<b>${escapeHtml(player.name)}</b> doubted <b>${escapeHtml(claimant?.name || "player")}</b>. The claim was <b>true</b>! The revealed cards were ${revealedCards}`
+      );
+    } else {
+      addLog("doubt",
+        `<b>${escapeHtml(player.name)}</b> caught <b>${escapeHtml(claimant?.name || "player")}</b> bluffing! The revealed cards were ${revealedCards}`
+      );
+    }
 
-    if (gameState.pile.length) {
-      const taken = gameState.pile.splice(0);
+    const taken = gameState.pile.splice(0);
+
+    if (taken.length) {
       penalized.hand.push(...taken);
       penalized.hand.sort();
-      addLog("penalty", `The pile (${taken.length} cards) goes to <b>${escapeHtml(penalized.name)}</b>'s hand.`);
+
+      if (truthful) {
+        addLog("penalty",
+          `The claim was true. The pile (${taken.length} cards) goes to doubter <b>${escapeHtml(penalized.name)}</b>.`
+        );
+      } else {
+        addLog("penalty",
+          `The claim was false. The pile (${taken.length} cards) goes to claimant <b>${escapeHtml(penalized.name)}</b>.`
+        );
+      }
     }
+
+    const roundWinnerId = truthful ? play.playerId : playerId;
+    const roundWinner = playerById(roundWinnerId);
 
     gameState.claim = null;
     gameState.lastPlay = null;
@@ -961,7 +661,7 @@ function handleAction(playerId, message) {
     const winnerIndex = gameState.order.indexOf(roundWinnerId);
     gameState.turn = winnerIndex >= 0 ? winnerIndex : 0;
 
-    addLog("info", `<b>${escapeHtml(roundWinner?.name || "Player")}</b> wins the round and throws first next claim.`);
+    addLog("info",`<b>${escapeHtml(roundWinner?.name || "Player")}</b> starts the next claim.`);
     broadcastState();
     return;
   }
@@ -986,7 +686,7 @@ function handleAction(playerId, message) {
       if (gameState.order.length) {
         if (gameState.turn >= gameState.order.length) gameState.turn = 0;
         const nextPlayer = playerById(gameState.order[gameState.turn]);
-        addLog("info", `The others continue. <b>${escapeHtml(nextPlayer?.name || "?")}</b> throws first.`);
+        addLog("info",`The others continue. <b>${escapeHtml(nextPlayer?.name || "?")}</b> throws first.`);
       } else {
         addLog("finish","🏆 <b>The game is complete!</b>");
       }
@@ -1009,9 +709,9 @@ function handleAction(playerId, message) {
       gameState.pendingWinner = null;
       gameState.turn = gameState.order.indexOf(nextId);
 
-      addLog("info", `Everyone passed. <b>${escapeHtml(nextPlayer?.name || "Next player")}</b> starts the next claim.`);
+      addLog("info",`Everyone passed. <b>${escapeHtml(nextPlayer?.name || "Next player")}</b> starts the next claim.`);
     } else {
-      addLog("info", `<b>${escapeHtml(player.name)}</b> passed.`);
+      addLog("info",`<b>${escapeHtml(player.name)}</b> passed.`);
       nextTurn();
     }
 
@@ -1020,11 +720,11 @@ function handleAction(playerId, message) {
 }
 
 function sendAction(message) {
-  if (isHost) handleAction(peer.id, message);
+  if (isHost) handleAction(peer.id,message);
   else if (hostConn?.open) hostConn.send(message);
 }
 
-function cardHtml(card, index, isSelected, disabled) {
+function cardHtml(card,index,isSelected,disabled) {
   const red = suitOf(card) === "♥" || suitOf(card) === "♦";
 
   return `<button class="card ${red ? "red" : ""} ${isSelected ? "selected" : ""}"
@@ -1070,17 +770,17 @@ function pumpPopupQueue(state) {
   $("winOverlay").classList.remove("hidden");
 }
 
-function renderTable(state, claimLabel) {
-  const pileCount = Math.min(state.pileCount || 0, 12);
-  const mostRecentPlayer = state.lastPlay
+function renderTable(state,claimLabel) {
+  const count = Math.min(state.pileCount || 0,12);
+  const lastPlayer = state.lastPlay
     ? state.players.find(player => player.id === state.lastPlay.playerId)?.name
     : null;
 
   $("tableClaim").textContent = state.claim
-    ? `${claimLabel(state.claim.rank)} claim${mostRecentPlayer ? " · last played by " + mostRecentPlayer : ""}`
+    ? `${claimLabel(state.claim.rank)} claim${lastPlayer ? " · last played by " + lastPlayer : ""}`
     : "No open claim · the next player chooses a rank";
 
-  $("tableCards").innerHTML = Array.from({length:pileCount}, (_, index) =>
+  $("tableCards").innerHTML = Array.from({length:count},(_,index) =>
     `<span class="played-card" style="--tilt:${(index % 5 - 2) * 4}deg" aria-label="Face-down card">🂠</span>`
   ).join("");
 
@@ -1095,7 +795,6 @@ function render() {
 
   const rankNames = {A:"Aces",J:"Jacks",Q:"Queens",K:"Kings"};
   const claimLabel = rank => rankNames[rank] || rank;
-
   $("roomLabel").textContent = state.roomCode;
 
   const standingFor = id => state.standings.find(entry => entry.id === id) || null;
@@ -1136,19 +835,19 @@ function render() {
     $("turnTitle").textContent = "🎯 Your turn";
     $("turnHelp").textContent = state.claim
       ? `Continue the ${claimLabel(state.claim.rank)} claim, doubt, or pass.`
-      : `Select cards, then choose a rank.`;
+      : "Select cards, then choose a rank.";
   } else {
     $("turnTitle").textContent = `⏳ ${turnPlayer?.name || "Another player's"} turn`;
     $("turnHelp").textContent = "Wait for your turn.";
   }
 
-  renderTable(state, claimLabel);
+  renderTable(state,claimLabel);
 
   const canPlay = gameRunning && !myStanding && myTurn && !state.pendingWinner;
   const hand = state.yourHand || [];
 
   $("hand").innerHTML = hand.map(item =>
-    cardHtml(item.card, item.index, selected.has(item.index), !canPlay)
+    cardHtml(item.card,item.index,selected.has(item.index),!canPlay)
   ).join("");
 
   document.querySelectorAll("#hand .card").forEach(button => {
@@ -1162,7 +861,6 @@ function render() {
 
   if (canPlay && !state.claim) {
     $("rankPanel").classList.remove("hidden");
-
     $("rankGrid").innerHTML = RANKS.map(rank =>
       `<button class="rank-btn" data-rank="${rank}" ${selected.size < 1 ? "disabled" : ""}>
         ${rank}${rankNames[rank] ? `<small>${rankNames[rank]}</small>` : ""}
@@ -1174,7 +872,7 @@ function render() {
         if (!selected.size) return;
         const indices = [...selected];
         selected.clear();
-        sendAction({type:"play", indices, claimedRank:button.dataset.rank});
+        sendAction({type:"play",indices,claimedRank:button.dataset.rank});
       };
     });
   } else {
@@ -1225,7 +923,7 @@ function render() {
     $("playBtn").onclick = () => {
       const indices = [...selected];
       selected.clear();
-      sendAction({type:"play", indices, claimedRank:state.claim.rank});
+      sendAction({type:"play",indices,claimedRank:state.claim.rank});
     };
   }
 
@@ -1243,7 +941,6 @@ function render() {
     };
   }
 
-  // Only the latest two log entries are displayed.
   $("log").innerHTML = (state.log || []).slice(-2).map(entry =>
     `<div class="log-entry">
       <span class="log-tag ${escapeHtml(entry.tag || "info")}">${escapeHtml((entry.tag || "info").toUpperCase())}</span>
@@ -1267,9 +964,9 @@ function showGame() {
   $("game").classList.remove("hidden");
 }
 
-function setStatus(text, isError = false, busy = false) {
+function setStatus(text,isError=false,busy=false) {
   const element = $("status");
-  element.classList.toggle("error", !!isError);
+  element.classList.toggle("error",!!isError);
   element.innerHTML = busy
     ? `<span class="spinner"></span>${escapeHtml(text)}`
     : escapeHtml(text);
@@ -1311,16 +1008,16 @@ function newPeer(id) {
   if (peer) {
     try { peer.destroy(); } catch (error) {}
   }
-  return id ? new Peer(id, peerConfig()) : new Peer(peerConfig());
+  return id ? new Peer(id,peerConfig()) : new Peer(peerConfig());
 }
 
 $("createBtn").onclick = () => {
   if (!window.Peer) {
-    setStatus("PeerJS did not load. Check your internet connection and reload.", true);
+    setStatus("PeerJS did not load. Check your internet connection and reload.",true);
     return;
   }
 
-  myName = sanitizeName($("nameInput").value, "Host");
+  myName = sanitizeName($("nameInput").value,"Host");
   roomCode = cleanCode($("roomInput").value);
   if (roomCode.length < 5) roomCode = newRoomCode();
   $("roomInput").value = roomCode;
@@ -1328,22 +1025,22 @@ $("createBtn").onclick = () => {
   $("createBtn").disabled = true;
   $("joinBtn").disabled = true;
   $("retryBtn").classList.add("hidden");
-  setStatus("Creating room…", false, true);
+  setStatus("Creating room…",false,true);
 
   peer = newPeer(roomPeerId(roomCode));
 
   connectTimer = setTimeout(() => {
-    setStatus("The server took too long. Retry or choose another room code.", true);
+    setStatus("The server took too long. Retry or choose another room code.",true);
     showRetry();
     resetLobby();
     try { peer?.destroy(); } catch (error) {}
-  }, CONNECT_TIMEOUT);
+  },CONNECT_TIMEOUT);
 
-  peer.on("open", () => {
+  peer.on("open",() => {
     clearConnectTimer();
     isHost = true;
     gameState = freshGame();
-    addPlayer(peer.id, myName);
+    addPlayer(peer.id,myName);
     showGame();
     $("roomLabel").textContent = roomCode;
     $("connectionLabel").textContent = "Host online";
@@ -1351,24 +1048,23 @@ $("createBtn").onclick = () => {
     render();
   });
 
-  peer.on("connection", connection => {
+  peer.on("connection",connection => {
     connections[connection.peer] = connection;
 
-    connection.on("data", data => {
+    connection.on("data",data => {
       if (!data || typeof data.type !== "string") return;
-
       if (data.type === "join") {
-        addPlayer(connection.peer, data.name);
+        addPlayer(connection.peer,data.name);
         return;
       }
 
       const now = Date.now();
       if (now - (lastActionAt[connection.peer] || 0) < 150) return;
       lastActionAt[connection.peer] = now;
-      handleAction(connection.peer, data);
+      handleAction(connection.peer,data);
     });
 
-    connection.on("close", () => {
+    connection.on("close",() => {
       delete connections[connection.peer];
 
       if (gameState && !gameState.started) {
@@ -1379,20 +1075,20 @@ $("createBtn").onclick = () => {
       }
     });
 
-    connection.on("error", error => console.warn("Player connection error", error));
+    connection.on("error",error => console.warn("Player connection error",error));
   });
 
-  peer.on("disconnected", () => {
+  peer.on("disconnected",() => {
     if (isHost && peer && !peer.destroyed) {
       $("connectionLabel").textContent = "Reconnecting…";
       try { peer.reconnect(); } catch (error) {}
     }
   });
 
-  peer.on("error", error => {
+  peer.on("error",error => {
     clearConnectTimer();
-    console.error("Peer error:", error);
-    setStatus(friendlyError(error.type), true);
+    console.error("Peer error:",error);
+    setStatus(friendlyError(error.type),true);
     showRetry();
     resetLobby();
   });
@@ -1400,45 +1096,45 @@ $("createBtn").onclick = () => {
 
 $("joinBtn").onclick = () => {
   if (!window.Peer) {
-    setStatus("PeerJS did not load. Check your internet connection and reload.", true);
+    setStatus("PeerJS did not load. Check your internet connection and reload.",true);
     return;
   }
 
-  myName = sanitizeName($("nameInput").value, "Player");
+  myName = sanitizeName($("nameInput").value,"Player");
   roomCode = cleanCode($("roomInput").value);
 
   if (roomCode.length < 5) {
-    setStatus("Enter the room code the host gave you.", true);
+    setStatus("Enter the room code the host gave you.",true);
     return;
   }
 
   $("createBtn").disabled = true;
   $("joinBtn").disabled = true;
   $("retryBtn").classList.add("hidden");
-  setStatus("Connecting to room " + roomCode + "…", false, true);
+  setStatus("Connecting to room " + roomCode + "…",false,true);
 
   peer = newPeer();
 
   connectTimer = setTimeout(() => {
-    setStatus("Connection took too long. Check the room code and confirm the host is online, then Retry.", true);
+    setStatus("Connection took too long. Check the room code and confirm the host is online, then Retry.",true);
     showRetry();
     resetLobby();
     try { peer?.destroy(); } catch (error) {}
-  }, CONNECT_TIMEOUT);
+  },CONNECT_TIMEOUT);
 
-  peer.on("open", () => {
-    hostConn = peer.connect(roomPeerId(roomCode), {reliable:true});
+  peer.on("open",() => {
+    hostConn = peer.connect(roomPeerId(roomCode),{reliable:true});
 
-    hostConn.on("open", () => {
+    hostConn.on("open",() => {
       clearConnectTimer();
-      hostConn.send({type:"join", name:myName});
+      hostConn.send({type:"join",name:myName});
       showGame();
       $("roomLabel").textContent = roomCode;
       $("connectionLabel").textContent = "Connected";
       setStatus("");
     });
 
-    hostConn.on("data", data => {
+    hostConn.on("data",data => {
       if (data?.type === "state") {
         gameState = data.state;
         $("connectionLabel").textContent = "Connected";
@@ -1446,25 +1142,25 @@ $("joinBtn").onclick = () => {
       }
     });
 
-    hostConn.on("close", () => {
+    hostConn.on("close",() => {
       $("connectionLabel").textContent = "Disconnected";
       $("turnTitle").textContent = "Disconnected";
       $("turnHelp").textContent = "The host closed the game or the connection dropped.";
     });
 
-    hostConn.on("error", error => {
+    hostConn.on("error",error => {
       clearConnectTimer();
-      console.error("Host connection error:", error);
-      setStatus("Could not connect. Check the room code and confirm the host is online, then Retry.", true);
+      console.error("Host connection error:",error);
+      setStatus("Could not connect. Check the room code and confirm the host is online, then Retry.",true);
       showRetry();
       resetLobby();
     });
   });
 
-  peer.on("error", error => {
+  peer.on("error",error => {
     clearConnectTimer();
-    console.error("Peer error:", error);
-    setStatus(friendlyError(error.type), true);
+    console.error("Peer error:",error);
+    setStatus(friendlyError(error.type),true);
     showRetry();
     resetLobby();
   });
