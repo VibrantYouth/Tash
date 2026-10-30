@@ -15,7 +15,7 @@
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html, body { height:100%; overflow:hidden; }
   body {
-    margin:0; padding:8px 10px calc(66px + env(safe-area-inset-bottom));
+    margin:0; padding:8px 10px calc(130px + env(safe-area-inset-bottom));
     background:
       radial-gradient(900px 400px at 15% -10%, #1d3a63 0%, transparent 60%),
       radial-gradient(700px 400px at 110% 20%, #35204d 0%, transparent 55%),
@@ -153,13 +153,16 @@
   }
   #rankPanel b { font-size:13px; }
   #rankPanel .rank-grid {
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(48px,1fr)); gap:6px; margin-top:7px;
+    display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:7px;
   }
   .rank-btn {
-    min-height:46px; padding:4px 2px; border-radius:9px; font-weight:800;
-    font-size:16px; background:rgba(255,255,255,.08); border:1px solid var(--line);
+    min-height:52px; padding:4px 2px; border-radius:9px; font-weight:800;
+    font-size:17px; background:rgba(255,255,255,.08); border:1px solid var(--line);
+    color:var(--text);
   }
-  .rank-btn:hover { border-color:var(--accent); }
+  .rank-btn .rank-label { display:block; font-size:9px; font-weight:600; color:var(--muted); margin-top:1px; }
+  .rank-btn:hover:not(:disabled) { border-color:var(--accent); }
+  .rank-btn:disabled { opacity:.5; }
   .rules { margin:6px 0 0; padding-left:18px; color:var(--muted); font-size:13px; line-height:1.65; }
   details summary { cursor:pointer; color:var(--accent); font-weight:700; font-size:14px; }
 
@@ -294,7 +297,7 @@ const SUITS = ["♠","♥","♦","♣"];
 const MAX_PLAY = 4;
 const MAX_PLAYERS = 8;
 const CONNECT_TIMEOUT = 12000; // ms per attempt
-const MAX_JOIN_ATTEMPTS = 4;   // automatic retries before showing Retry button
+const MAX_JOIN_ATTEMPTS = 4; // automatic retries before showing Retry button
 const $ = id => document.getElementById(id);
 
 let peer = null, hostConn = null, connections = {};
@@ -631,9 +634,10 @@ function render(){
   if (canPlay && !state.claim) {
     rp.classList.remove("hidden");
     $("rankGrid").innerHTML = RANKS.map(r =>
-      `<button class="rank-btn" data-rank="${r}" ${selected.size<1?"disabled":""}>${r}${rankNames[r]?`<div style="font-size:9px;font-weight:600">${rankNames[r]}</div>`:""}</button>`).join("");
+      `<button class="rank-btn" data-rank="${r}" ${selected.size<1?"disabled":""}>${r}${rankNames[r]?`<span class="rank-label">${rankNames[r]}</span>`:""}</button>`).join("");
     document.querySelectorAll("#rankGrid .rank-btn").forEach(btn => {
       btn.onclick = () => {
+        if (selected.size < 1 && hand.length > 0) selected.add(0);
         if (selected.size < 1) return;
         const indices = [...selected]; selected.clear();
         sendAction({type:"play", indices, claimedRank: btn.dataset.rank});
