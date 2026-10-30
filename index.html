@@ -7,390 +7,197 @@
 <style>
   :root {
     color-scheme: dark;
-    --bg1: #0b1220;
-    --bg2: #16233a;
-    --panel: rgba(255,255,255,.055);
-    --panel2: rgba(255,255,255,.035);
-    --line: rgba(255,255,255,.14);
-    --text: #eef4fb;
-    --muted: #9fb0c3;
-    --accent: #4be0c6;
-    --danger: #ff7b7b;
-    --gold: #ffd166;
+    --bg1:#0b1220; --bg2:#16233a;
+    --panel:rgba(255,255,255,.055); --panel2:rgba(255,255,255,.035);
+    --line:rgba(255,255,255,.14); --text:#eef4fb; --muted:#9fb0c3;
+    --accent:#4be0c6; --danger:#ff7b7b; --gold:#ffd166;
   }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { height:100%; overflow:hidden; } /* NO SCROLL */
   body {
-    margin: 0;
-    padding: 20px 14px 40px;
-    min-height: 100vh;
+    margin:0; padding:8px 10px calc(66px + env(safe-area-inset-bottom));
     background:
-      radial-gradient(1100px 500px at 15% -10%, #1d3a63 0%, transparent 60%),
-      radial-gradient(900px 500px at 110% 20%, #35204d 0%, transparent 55%),
+      radial-gradient(900px 400px at 15% -10%, #1d3a63 0%, transparent 60%),
+      radial-gradient(700px 400px at 110% 20%, #35204d 0%, transparent 55%),
       linear-gradient(160deg, var(--bg1), var(--bg2));
-    background-attachment: fixed;
-    color: var(--text);
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    color:var(--text); font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+    display:flex; flex-direction:column;
   }
-  button, input { font: inherit; }
+  button, input { font:inherit; }
   button {
-    min-height: 46px;
-    padding: 10px 16px;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    background: rgba(255,255,255,.09);
-    color: var(--text);
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform .08s ease, filter .15s ease;
+    min-height:44px; padding:8px 14px; border:1px solid var(--line); border-radius:12px;
+    background:rgba(255,255,255,.09); color:var(--text); font-weight:600; cursor:pointer;
+    transition:transform .08s ease, filter .15s ease;
   }
-  button:hover:not(:disabled) { filter: brightness(1.15); transform: translateY(-1px); }
-  button:active:not(:disabled) { transform: translateY(0) scale(.98); }
-  button:disabled { opacity: .4; cursor: not-allowed; }
+  button:hover:not(:disabled){ filter:brightness(1.15); }
+  button:active:not(:disabled){ transform:scale(.98); }
+  button:disabled { opacity:.4; cursor:not-allowed; }
   button.primary {
-    border-color: transparent;
-    background: linear-gradient(135deg, #35e2c6, #2bb3d9);
-    color: #06241f;
-    font-weight: 800;
-    box-shadow: 0 4px 18px rgba(43,179,217,.35);
+    border-color:transparent; background:linear-gradient(135deg,#35e2c6,#2bb3d9);
+    color:#06241f; font-weight:800;
   }
   button.danger {
-    border-color: rgba(255,123,123,.5);
-    background: linear-gradient(135deg, #7a2f3a, #5b2630);
-    color: #ffe1e1;
+    border-color:rgba(255,123,123,.5); background:linear-gradient(135deg,#7a2f3a,#5b2630); color:#ffe1e1;
   }
   input {
-    min-height: 46px;
-    padding: 10px 14px;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    background: rgba(0,0,0,.25);
-    color: var(--text);
-    width: min(100%, 240px);
+    min-height:46px; padding:10px 14px; border:1px solid var(--line); border-radius:12px;
+    background:rgba(0,0,0,.25); color:var(--text); width:min(100%,240px); font-size:16px;
   }
-  input::placeholder { color: var(--muted); }
-  .app { width: min(960px, 100%); margin: 0 auto; }
+  .app { width:min(960px,100%); margin:0 auto; display:flex; flex-direction:column; height:100%; min-height:0; }
   h1 {
-    margin: 6px 0 2px;
-    font-size: 30px;
-    letter-spacing: .5px;
-    background: linear-gradient(90deg, #4be0c6, #7db2ff);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    margin:2px 0; font-size:clamp(18px,4.5vw,28px); letter-spacing:.5px;
+    background:linear-gradient(90deg,#4be0c6,#7db2ff);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
   }
-  .subtitle { margin: 0 0 18px; color: var(--muted); }
+  .subtitle { margin:0 0 8px; color:var(--muted); font-size:clamp(11px,3vw,14px); }
   .panel {
-    margin: 14px 0;
-    padding: 18px;
-    border: 1px solid var(--line);
-    border-radius: 18px;
-    background: var(--panel);
-    backdrop-filter: blur(8px);
-    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    padding:10px 12px; border:1px solid var(--line); border-radius:14px;
+    background:var(--panel); backdrop-filter:blur(8px); margin:5px 0; min-height:0;
   }
-  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-  .muted { color: var(--muted); }
-  .hidden { display: none !important; }
-  #status { min-height: 22px; margin-top: 12px; color: var(--muted); }
-  .roomline { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+  .row { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+  .muted { color:var(--muted); }
+  .hidden { display:none !important; }
+  #status { margin-top:8px; color:var(--muted); font-size:13px; }
+  .roomline { display:flex; flex-wrap:wrap; justify-content:space-between; gap:6px; }
   .pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 13px;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    background: var(--panel2);
-    color: var(--muted);
-    font-size: 13px;
+    display:inline-flex; align-items:center; gap:5px; padding:4px 11px; border:1px solid var(--line);
+    border-radius:999px; background:var(--panel2); color:var(--muted); font-size:12px;
   }
   .turnbox {
-    margin-top: 14px;
-    padding: 16px;
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    background: linear-gradient(135deg, rgba(75,224,198,.12), rgba(125,178,255,.08));
+    margin-top:8px; padding:8px 12px; border:1px solid var(--line); border-radius:12px;
+    background:linear-gradient(135deg,rgba(75,224,198,.12),rgba(125,178,255,.08));
   }
-  .turnbox strong { display: block; margin-bottom: 4px; font-size: 19px; }
+  .turnbox strong { display:block; font-size:clamp(14px,3.6vw,18px); }
+  #turnHelp { font-size:12px; }
   #players {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    gap: 10px;
-    margin-top: 14px;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:6px; margin-top:8px;
   }
-  .player {
-    padding: 13px;
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    background: var(--panel2);
-  }
-  .player.current {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 1px var(--accent), 0 0 22px rgba(75,224,198,.25);
-  }
-  .player.done { opacity: .65; border-color: rgba(255,209,102,.45); }
-  .player-name { font-weight: 750; }
-  .player-meta { margin-top: 5px; color: var(--muted); font-size: 13px; }
-  .medal { margin-left: 6px; }
-  .section-title { margin: 0 0 10px; font-size: 15px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); }
-  .table {
-    padding: 18px;
-    border: 1px dashed rgba(255,255,255,.25);
-    border-radius: 14px;
-    background: radial-gradient(600px 200px at 50% 0%, rgba(255,255,255,.05), transparent);
-    line-height: 1.8;
-  }
+  .player { padding:7px 10px; border:1px solid var(--line); border-radius:11px; background:var(--panel2); }
+  .player.current { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
+  .player.done { opacity:.65; border-color:rgba(255,209,102,.45); }
+  .player-name { font-weight:700; font-size:13px; }
+  .player-meta { margin-top:2px; color:var(--muted); font-size:11px; }
+  .section-title { margin:0 0 6px; font-size:11px; text-transform:uppercase; letter-spacing:1.3px; color:var(--muted); }
+  .table { padding:8px 12px; border:1px dashed rgba(255,255,255,.25); border-radius:11px; font-size:13px; line-height:1.55; }
   .pilecount {
-    display: inline-block;
-    margin-top: 6px;
-    padding: 6px 14px;
-    border-radius: 10px;
-    background: rgba(255,209,102,.12);
-    border: 1px solid rgba(255,209,102,.3);
-    color: var(--gold);
-    font-weight: 700;
+    display:inline-block; margin-top:4px; padding:3px 10px; border-radius:8px;
+    background:rgba(255,209,102,.12); border:1px solid rgba(255,209,102,.3);
+    color:var(--gold); font-weight:700; font-size:12px;
   }
-  #hand { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
+  #hand { display:flex; flex-wrap:wrap; gap:7px; margin:8px 0 4px; }
   .card {
-    position: relative;
-    width: 68px;
-    height: 92px;
-    border: 2px solid rgba(255,255,255,.7);
-    border-radius: 12px;
-    background: linear-gradient(160deg, #ffffff, #e8edf2);
-    color: #1a2430;
-    font-size: 21px;
-    font-weight: 800;
-    cursor: pointer;
-    transition: transform .1s ease, box-shadow .15s ease;
-    box-shadow: 0 4px 12px rgba(0,0,0,.35);
+    position:relative; width:clamp(46px,14vw,64px); height:clamp(64px,19vw,88px);
+    border:2px solid rgba(255,255,255,.7); border-radius:10px;
+    background:linear-gradient(160deg,#ffffff,#e8edf2); color:#1a2430;
+    font-size:clamp(15px,4vw,20px); font-weight:800; cursor:pointer;
+    transition:transform .1s ease; box-shadow:0 3px 10px rgba(0,0,0,.35); padding:0;
   }
-  .card.red { color: #d8334c; }
-  .card .corner { position: absolute; top: 6px; left: 8px; font-size: 17px; }
-  .card .suit { position: absolute; bottom: 6px; right: 8px; font-size: 26px; }
-  .card.selected {
-    outline: 3px solid var(--accent);
-    transform: translateY(-8px) scale(1.04);
-    box-shadow: 0 8px 24px rgba(75,224,198,.45);
+  .card.red { color:#d8334c; }
+  .card .corner { position:absolute; top:4px; left:7px; font-size:.8em; }
+  .card .suit { position:absolute; bottom:4px; right:7px; font-size:1.2em; }
+  .card.selected { outline:3px solid var(--accent); transform:translateY(-8px) scale(1.05); }
+  .card:disabled { opacity:.55; cursor:not-allowed; transform:none; }
+  .hint { min-height:18px; color:var(--muted); font-size:12px; }
+  #actions {
+    display:flex; flex-wrap:wrap; gap:8px;
+    position:fixed; left:0; right:0; bottom:0; z-index:30;
+    padding:8px 12px calc(8px + env(safe-area-inset-bottom));
+    background:rgba(11,18,32,.94); backdrop-filter:blur(10px);
+    border-top:1px solid var(--line);
   }
-  .card:disabled { opacity: .55; cursor: not-allowed; transform: none; }
-  .hint { min-height: 22px; color: var(--muted); font-size: 13px; }
-  #actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+  #actions .wrap { width:min(960px,100%); margin:0 auto; display:flex; flex-wrap:wrap; gap:8px; }
+  #actions button { flex:1 1 40%; min-height:48px; }
+  #actions .muted { flex:1 1 100%; text-align:center; font-size:12px; padding:5px 0; }
 
   .log-entry {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 5px;
-    padding: 7px 4px;
-    border-bottom: 1px solid rgba(255,255,255,.07);
-    font-size: 13px;
-    color: var(--muted);
+    display:flex; align-items:center; flex-wrap:wrap; gap:4px;
+    padding:4px 3px; border-bottom:1px solid rgba(255,255,255,.07);
+    font-size:12px; color:var(--muted);
   }
-  .log-entry b { color: var(--text); }
+  .log-entry b { color:var(--text); }
   .mini-card {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 30px;
-    height: 40px;
-    padding: 0 5px;
-    border: 1.5px solid rgba(255,255,255,.75);
-    border-radius: 6px;
-    background: linear-gradient(160deg, #ffffff, #e8edf2);
-    color: #1a2430;
-    font-size: 13px;
-    font-weight: 800;
-    box-shadow: 0 2px 6px rgba(0,0,0,.35);
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:24px; height:32px; padding:0 4px;
+    border:1.5px solid rgba(255,255,255,.75); border-radius:5px;
+    background:linear-gradient(160deg,#ffffff,#e8edf2); color:#1a2430;
+    font-size:11px; font-weight:800;
   }
-  .mini-card.red { color: #d8334c; }
+  .mini-card.red { color:#d8334c; }
+  /* face-down card as shown in log: claimed pile tokens */
   .mini-card.back {
-    color: #eef4fb;
-    background: linear-gradient(135deg, #35558a, #1d3a63);
-    border-color: rgba(255,255,255,.4);
+    color:#eef4fb; background:linear-gradient(135deg,#35558a,#1d3a63);
+    border-color:rgba(255,255,255,.4);
   }
-  .mini-cards { display: inline-flex; flex-wrap: wrap; gap: 4px; margin-left: 4px; }
+  .mini-cards { display:inline-flex; flex-wrap:wrap; gap:3px; margin-left:3px; }
   .log-tag {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 800;
-    margin-right: 4px;
+    display:inline-block; padding:1px 7px; border-radius:5px;
+    font-size:10px; font-weight:800; margin-right:3px;
   }
-  .log-tag.play { background: rgba(75,224,198,.18); color: var(--accent); }
-  .log-tag.doubt { background: rgba(255,123,123,.18); color: var(--danger); }
-  .log-tag.penalty { background: rgba(255,209,102,.18); color: var(--gold); }
-  .log-tag.finish { background: rgba(255,209,102,.25); color: var(--gold); }
-  .log-tag.info { background: rgba(125,178,255,.15); color: #9cc3ff; }
-  #log { max-height: 260px; overflow: auto; }
+  .log-tag.play { background:rgba(75,224,198,.18); color:var(--accent); }
+  .log-tag.doubt { background:rgba(255,123,123,.18); color:var(--danger); }
+  .log-tag.penalty { background:rgba(255,209,102,.18); color:var(--gold); }
+  .log-tag.finish { background:rgba(255,209,102,.25); color:var(--gold); }
+  .log-tag.info { background:rgba(125,178,255,.15); color:#9cc3ff; }
+  #log { flex:1 1 auto; overflow-y:auto; min-height:60px; max-height:26vh; overscroll-behavior:contain; }
 
   #rankPanel {
-    margin: 12px 0 2px;
-    padding: 12px;
-    border: 1px solid rgba(75,224,198,.35);
-    border-radius: 14px;
-    background: rgba(75,224,198,.06);
+    margin:6px 0 2px; padding:8px; border:1px solid rgba(75,224,198,.35);
+    border-radius:12px; background:rgba(75,224,198,.06);
   }
+  #rankPanel b { font-size:13px; }
   #rankPanel .rank-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(58px, 1fr));
-    gap: 8px;
-    margin-top: 10px;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(48px,1fr)); gap:6px; margin-top:7px;
   }
   .rank-btn {
-    min-height: 48px;
-    padding: 6px 4px;
-    border-radius: 10px;
-    font-weight: 800;
-    font-size: 17px;
-    background: rgba(255,255,255,.08);
-    border: 1px solid var(--line);
+    min-height:46px; padding:4px 2px; border-radius:9px; font-weight:800;
+    font-size:16px; background:rgba(255,255,255,.08); border:1px solid var(--line);
   }
-  .rank-btn:hover { border-color: var(--accent); }
-
-  .rules { margin: 8px 0 0; padding-left: 20px; color: var(--muted); line-height: 1.7; }
-  details summary { cursor: pointer; color: var(--accent); font-weight: 700; }
+  .rank-btn:hover { border-color:var(--accent); }
+  .rules { margin:6px 0 0; padding-left:18px; color:var(--muted); font-size:13px; line-height:1.65; }
+  details summary { cursor:pointer; color:var(--accent); font-weight:700; font-size:14px; }
 
   #winOverlay {
-    position: fixed;
-    inset: 0;
-    z-index: 50;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(4, 8, 16, .82);
-    backdrop-filter: blur(6px);
-    padding: 20px;
+    position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center;
+    background:rgba(4,8,16,.85); backdrop-filter:blur(6px); padding:16px;
   }
   .win-card {
-    width: min(440px, 100%);
-    padding: 34px 26px;
-    text-align: center;
-    border: 2px solid var(--gold);
-    border-radius: 22px;
-    background: linear-gradient(160deg, #1b2a45, #2a1f3d);
-    box-shadow: 0 0 60px rgba(255,209,102,.35);
-    animation: pop .35s ease;
+    width:min(420px,100%); max-height:90vh; overflow-y:auto; padding:24px 20px; text-align:center;
+    border:2px solid var(--gold); border-radius:20px;
+    background:linear-gradient(160deg,#1b2a45,#2a1f3d);
+    box-shadow:0 0 50px rgba(255,209,102,.3); animation:pop .3s ease;
   }
-  @keyframes pop {
-    from { transform: scale(.75); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+  @keyframes pop { from{transform:scale(.8);opacity:0} to{transform:scale(1);opacity:1} }
+  .win-card .trophy { font-size:44px; }
+  .win-card h2 { margin:10px 0 4px; font-size:20px; color:var(--gold); }
+  .win-card .who { font-size:18px; font-weight:800; margin-bottom:4px; }
+  .win-card .sub { color:var(--muted); margin-bottom:12px; font-size:13px; }
+  .standings { margin:0 0 12px; padding:0; list-style:none; text-align:left; }
+  .standings li { padding:6px 10px; border-bottom:1px solid rgba(255,255,255,.1); font-size:13px; }
+  .popup-count { color:var(--muted); font-size:11px; margin-bottom:8px; }
+
+  /* Lobby fits one screen */
+  #lobby { flex:0 0 auto; }
+  /* Game area: fills remaining height, log flexes */
+  #game { flex:1 1 auto; display:flex; flex-direction:column; min-height:0; }
+  #game .panel { flex:0 0 auto; }
+  #logPanel { flex:1 1 auto; display:flex; flex-direction:column; min-height:0; }
+
+  @media (max-height:700px) {
+    #log { max-height:20vh; }
+    .card { width:clamp(42px,12vw,56px); height:clamp(58px,17vw,78px); }
   }
-  .win-card .trophy { font-size: 58px; }
-  .win-card h2 {
-    margin: 12px 0 6px;
-    font-size: 26px;
-    background: linear-gradient(90deg, #ffd166, #ff9f5a);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  .win-card .who { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
-  .win-card .sub { color: var(--muted); margin-bottom: 18px; }
-  .standings { margin: 0 0 18px; padding: 0; list-style: none; text-align: left; }
-  .standings li {
-    padding: 8px 12px;
-    border-bottom: 1px solid rgba(255,255,255,.1);
-    font-size: 15px;
-  }
-  .popup-count { color: var(--muted); font-size: 12px; margin-bottom: 10px; }
-
-  /* ============ MOBILE DESIGN ============ */
-  @media (max-width: 600px) {
-    body {
-      padding: 10px 8px calc(88px + env(safe-area-inset-bottom));
-    }
-    h1 { font-size: 23px; }
-    .subtitle { font-size: 13px; margin-bottom: 10px; }
-    .panel {
-      padding: 13px 12px;
-      border-radius: 14px;
-      margin: 10px 0;
-    }
-    input { width: 100%; min-height: 50px; font-size: 16px; }
-    .row input { flex: 1 1 100%; }
-    button { min-height: 50px; font-size: 15px; padding: 10px 14px; flex: 1 1 auto; }
-    .row { gap: 8px; }
-
-    /* Bigger, tappable cards that auto-fit narrow screens */
-    #hand { gap: 8px; margin: 12px 0; }
-    .card {
-      width: clamp(52px, 21vw, 68px);
-      height: clamp(72px, 29vw, 92px);
-      font-size: 17px;
-      border-width: 2px;
-    }
-    .card.selected { transform: translateY(-12px) scale(1.06); }
-
-    /* Turn banner compact */
-    .turnbox { padding: 12px; }
-    .turnbox strong { font-size: 16px; }
-
-    /* Players grid: 2 per row on phones */
-    #players { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .player { padding: 10px; }
-    .player-name { font-size: 14px; }
-
-    /* Table & pile */
-    .table { padding: 12px; font-size: 14px; }
-
-    /* Rank buttons: comfortable thumb targets */
-    #rankPanel .rank-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
-    .rank-btn { min-height: 52px; font-size: 19px; }
-
-    /* Log takes most of the screen */
-    #log { max-height: 40vh; font-size: 13px; }
-    .log-entry { font-size: 12px; }
-    .mini-card { min-width: 26px; height: 36px; font-size: 12px; }
-
-    /* Win popup fits small screens */
-    .win-card { padding: 24px 18px; }
-    .win-card .trophy { font-size: 46px; }
-    .win-card h2 { font-size: 20px; }
-    .win-card .who { font-size: 18px; }
-
-    /* Sticky action bar: Play / Doubt / Pass always visible at the bottom */
-    #actions {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 30;
-      margin: 0;
-      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-      background: rgba(11, 18, 32, .92);
-      backdrop-filter: blur(10px);
-      border-top: 1px solid var(--line);
-    }
-    #actions button { flex: 1 1 45%; }
-    #actions .muted {
-      flex: 1 1 100%;
-      text-align: center;
-      font-size: 13px;
-      padding: 6px 0;
-    }
-  }
-
-  /* Very narrow phones (iPhone SE etc.) */
-  @media (max-width: 360px) {
-    #players { grid-template-columns: 1fr; }
-    #rankPanel .rank-grid { grid-template-columns: repeat(5, 1fr); }
-    .card { width: clamp(46px, 19vw, 56px); height: clamp(64px, 26vw, 76px); }
-  }
-
-  /* Landscape phones: keep hand reachable, shrink log */
-  @media (max-height: 480px) and (orientation: landscape) {
-    #log { max-height: 120px; }
-    .card { width: 54px; height: 74px; }
-    #players { grid-template-columns: repeat(4, 1fr); }
+  @media (max-height:560px) {
+    #players { grid-template-columns:repeat(4,1fr); }
+    #log { max-height:14vh; }
+    .turnbox { padding:5px 10px; }
   }
 </style>
 </head>
 <body>
 <main class="app">
   <h1>🃏 Da Hujre Tash</h1>
-  <p class="subtitle">Supports 2 to 8 players</p>
+  <p class="subtitle">Supports 2 to 8 players — one screen, no scrolling</p>
 
   <section id="lobby" class="panel">
     <h2 class="section-title">Join a game</h2>
@@ -398,11 +205,11 @@
       <input id="nameInput" maxlength="16" placeholder="Your name" autocomplete="nickname">
       <input id="roomInput" maxlength="8" placeholder="Room code" autocomplete="off">
     </div>
-    <div class="row" style="margin-top:12px">
+    <div class="row" style="margin-top:10px">
       <button id="createBtn" class="primary">Create room</button>
       <button id="joinBtn">Join room</button>
     </div>
-    <div id="status">The host creates a room, then shares its code. Everyone joins with the same code — it works for 2, 3, 4 or more players. Internet is required.</div>
+    <div id="status">The host creates a room and shares the code. Works for 2–8 players. Internet required.</div>
   </section>
 
   <section id="game" class="hidden">
@@ -425,33 +232,18 @@
 
     <div class="panel">
       <h2 class="section-title">Your cards</h2>
-      <div class="muted">Tap 1–4 cards, then play. If a claim is open you must continue it.</div>
       <div id="hand"></div>
       <div id="handHint" class="hint"></div>
       <div id="rankPanel" class="hidden">
-        <b style="color:var(--accent)">Choose a rank to start your claim — tap it:</b>
+        <b style="color:var(--accent)">Choose a rank for your claim:</b>
         <div id="rankGrid" class="rank-grid"></div>
       </div>
-      <div id="actions"></div>
     </div>
 
-    <div class="panel">
+    <div class="panel" id="logPanel">
       <h2 class="section-title">Game log</h2>
       <div id="log"></div>
     </div>
-
-    <details class="panel">
-      <summary>How to play</summary>
-      <ol class="rules">
-        <li>On your turn, play 1–4 cards face down. If no claim is open, <b>tap a rank</b> in the chooser panel to start a claim.</li>
-        <li>While a claim is open, everyone must <b>continue that same rank</b> — you cannot switch to another rank until the claim is finished.</li>
-        <li>A claim finishes when someone <b>doubts</b> it, or when <b>everyone else passes</b>.</li>
-        <li><b>Doubt correct</b> (the play was a bluff) → the whole pile goes to the <b>bluffer's hand</b>, and the <b>doubter wins the round</b> and throws the first card of the next claim.</li>
-        <li><b>Doubt wrong</b> (the play was true) → the whole pile goes to the <b>doubter's hand</b>, and the bluffer starts the next claim.</li>
-        <li>If everyone passes, the pile is removed from the game and the turn goes to the <b>next player</b>, who starts the next claim.</li>
-        <li>When a player empties their hand and their last claim is <b>accepted</b>, they finish — <b>1st</b>, then everyone else keeps playing for <b>2nd</b> and <b>3rd</b> place, until only one player remains.</li>
-      </ol>
-    </details>
   </section>
 
   <div id="winOverlay" class="hidden">
@@ -465,6 +257,8 @@
       <button id="winCloseBtn" class="primary">Continue</button>
     </div>
   </div>
+
+  <div id="actions" class="hidden"><div class="wrap" id="actionsWrap"></div></div>
 </main>
 
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js" crossorigin="anonymous"></script>
@@ -473,90 +267,56 @@
 
 const RANKS = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
 const SUITS = ["♠","♥","♦","♣"];
-const MAX_PLAY = 4; // maximum cards a player can throw per turn
-const MAX_PLAYERS = 8; // security: room capacity cap
+const MAX_PLAY = 4;
+const MAX_PLAYERS = 8;
 const $ = id => document.getElementById(id);
 
-let peer = null;
-let hostConn = null;
-let connections = {};
-let isHost = false;
-let roomCode = "";
-let myName = "";
+let peer = null, hostConn = null, connections = {};
+let isHost = false, roomCode = "", myName = "";
 let gameState = null;
 let selected = new Set();
-let shownFinishCount = 0; // how many finish events this client has already popped up
-let popupQueue = []; // finish events waiting to be displayed
-let lastActionAt = {}; // security: anti-flood tracker
+let shownFinishCount = 0, popupQueue = [];
+let lastActionAt = {};
 
-const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, ch => ({
-  "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+const escapeHtml = v => String(v ?? "").replace(/[&<>"']/g, ch => ({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
 }[ch]));
-
-/* Security: allow letters, digits, spaces, underscore, dash — strip everything else */
-function sanitizeName(value, fallback) {
-  const cleaned = String(value || "").replace(/[^\p{L}\p{N} _\-]/gu, "").trim().slice(0, 16);
-  return cleaned || fallback;
+function sanitizeName(v, fb){
+  const c = String(v||"").replace(/[^\p{L}\p{N} _\-]/gu,"").trim().slice(0,16);
+  return c || fb;
 }
-
-/* Security: strip dangerous tags from log text on the client side */
-function sanitizeLogText(text) {
-  return String(text || "")
-    .replace(/<\s*(script|iframe|object|embed|link|style|img|svg)[^>]*>/gi, "")
-    .replace(/on\w+\s*=/gi, "");
+function sanitizeLogText(t){
+  return String(t||"")
+    .replace(/<\s*(script|iframe|object|embed|link|style|img|svg)[^>]*>/gi,"")
+    .replace(/on\w+\s*=/gi,"");
 }
-
-const rankOf = card => card.slice(0, -1);
-const suitOf = card => card.slice(-1);
-const cleanCode = value => value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
-
-/* Security: long, cryptographically random room codes (no confusing 0/O/1/I/L) */
-function newRoomCode() {
+const rankOf = c => c.slice(0,-1);
+const suitOf = c => c.slice(-1);
+const cleanCode = v => v.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,8);
+function newRoomCode(){
   const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
-  const bytes = new Uint32Array(6);
-  crypto.getRandomValues(bytes);
-  return [...bytes].map(b => chars[b % chars.length]).join("");
+  const b = new Uint32Array(6); crypto.getRandomValues(b);
+  return [...b].map(x => chars[x % chars.length]).join("");
 }
+function freshGame(){
+  return { started:false, players:[], order:[], standings:[], finishQueue:[],
+    turn:0, pile:[], claim:null, lastPlay:null, passCount:0, pendingWinner:null, log:[] };
+}
+const playerById = id => gameState?.players.find(p => p.id === id) || null;
 
-function freshGame() {
+function publicStateFor(id){
+  const p = playerById(id);
+  const turnId = gameState.order.length ? gameState.order[gameState.turn % gameState.order.length] : null;
   return {
-    started: false,
-    players: [],
-    order: [],
-    standings: [],
-    finishQueue: [],
-    turn: 0,
-    pile: [],
-    claim: null,
-    lastPlay: null,
-    passCount: 0,
-    pendingWinner: null,
-    log: []
-  };
-}
-
-function playerById(id) {
-  return gameState?.players.find(player => player.id === id) || null;
-}
-
-function publicStateFor(id) {
-  const player = playerById(id);
-  const turnId = gameState.order.length
-    ? gameState.order[gameState.turn % gameState.order.length]
-    : null;
-
-  return {
-    roomCode,
-    started: gameState.started,
-    players: gameState.players.map(p => ({
-      id: p.id, name: p.name, count: p.hand.length
-    })),
+    roomCode, started: gameState.started,
+    players: gameState.players.map(p => ({id:p.id, name:p.name, count:p.hand.length})),
     order: gameState.order.slice(),
     standings: gameState.standings.slice(),
     finishQueue: gameState.finishQueue.slice(),
     turn: turnId,
-    claim: gameState.claim ? {rank: gameState.claim.rank, starterId: gameState.claim.starterId} : null,
+    claim: gameState.claim ? {rank:gameState.claim.rank, starterId:gameState.claim.starterId} : null,
     pileCount: gameState.pile.length,
+    /* SECURITY: last play shows only CLAIMED rank + count — never the real cards */
     lastPlay: gameState.lastPlay ? {
       playerId: gameState.lastPlay.playerId,
       count: gameState.lastPlay.count,
@@ -565,644 +325,422 @@ function publicStateFor(id) {
     pendingWinner: gameState.pendingWinner,
     log: gameState.log.slice(-24),
     yourId: id,
-    yourHand: player ? player.hand.map((card, index) => ({card, index})) : []
+    yourHand: p ? p.hand.map((card,index) => ({card,index})) : []
   };
 }
-
-function addLog(tag, text) {
-  gameState.log.push({tag: tag || "info", text: text || ""});
+function addLog(tag, text){
+  gameState.log.push({tag:tag||"info", text:text||""});
   if (gameState.log.length > 80) gameState.log.shift();
 }
-
-function broadcastState() {
+function broadcastState(){
   if (!isHost || !peer || !gameState) return;
-  for (const [id, connection] of Object.entries(connections)) {
-    if (connection?.open) connection.send({type:"state", state:publicStateFor(id)});
+  for (const [id, conn] of Object.entries(connections)) {
+    if (conn?.open) conn.send({type:"state", state:publicStateFor(id)});
   }
   gameState.localSnapshot = publicStateFor(peer.id);
   render();
 }
+const getMyState = () => isHost ? gameState?.localSnapshot : gameState;
 
-function getMyState() {
-  return isHost ? gameState?.localSnapshot : gameState;
-}
-
-function addPlayer(id, name) {
+function addPlayer(id, name){
   if (!gameState || gameState.started) return;
   if (gameState.players.length >= MAX_PLAYERS) return;
-  if (!gameState.players.some(player => player.id === id)) {
-    const safeName = sanitizeName(name, `Player ${gameState.players.length + 1}`);
+  if (!gameState.players.some(p => p.id === id)) {
+    const safeName = sanitizeName(name, `Player ${gameState.players.length+1}`);
     gameState.players.push({id, name:safeName, hand:[]});
-    gameState.order = gameState.players.map(player => player.id);
+    gameState.order = gameState.players.map(p => p.id);
     addLog("info", `<b>${escapeHtml(safeName)}</b> joined the room.`);
   }
   broadcastState();
 }
 
-function startGame() {
+function startGame(){
   if (!isHost || !gameState) return;
-  if (gameState.players.length < 2) {
-    addLog("info", "At least 2 players are needed to start.");
-    broadcastState();
-    return;
-  }
+  if (gameState.players.length < 2) { addLog("info","At least 2 players are needed."); broadcastState(); return; }
 
   const deck = [];
-  for (const suit of SUITS) {
-    for (const rank of RANKS) deck.push(rank + suit);
+  for (const s of SUITS) for (const r of RANKS) deck.push(r+s);
+  for (let i = deck.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [deck[i],deck[j]] = [deck[j],deck[i]];
   }
-  for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [deck[i], deck[j]] = [deck[j], deck[i]];
-  }
+  for (const p of gameState.players) p.hand = [];
+  let i = 0;
+  while (deck.length) { gameState.players[i % gameState.players.length].hand.push(deck.pop()); i++; }
+  gameState.players.forEach(p => p.hand.sort());
 
-  for (const player of gameState.players) player.hand = [];
-  let index = 0;
-  while (deck.length) {
-    gameState.players[index % gameState.players.length].hand.push(deck.pop());
-    index++;
-  }
-  gameState.players.forEach(player => player.hand.sort());
-
-  gameState.started = true;
-  gameState.order = gameState.players.map(player => player.id);
-  gameState.standings = [];
-  gameState.finishQueue = [];
-  gameState.turn = 0;
-  gameState.pile = [];
-  gameState.claim = null;
-  gameState.lastPlay = null;
-  gameState.passCount = 0;
-  gameState.pendingWinner = null;
-  selected.clear();
-  shownFinishCount = 0;
-  popupQueue = [];
-  addLog("info", `Game started with ${gameState.players.length} players. First player chooses any rank. Max ${MAX_PLAY} cards per turn.`);
+  Object.assign(gameState, {
+    started:true, order:gameState.players.map(p=>p.id), standings:[], finishQueue:[],
+    turn:0, pile:[], claim:null, lastPlay:null, passCount:0, pendingWinner:null
+  });
+  selected.clear(); shownFinishCount = 0; popupQueue = [];
+  addLog("info", `Game started with ${gameState.players.length} players. Max ${MAX_PLAY} cards per turn.`);
   broadcastState();
 }
 
-function nextTurn() {
-  if (gameState.order.length) {
-    gameState.turn = (gameState.turn + 1) % gameState.order.length;
-  }
-}
+const nextTurn = () => { if (gameState.order.length) gameState.turn = (gameState.turn+1) % gameState.order.length; };
 
-function recordFinish(playerId) {
-  const player = playerById(playerId);
-  if (!player) return;
-
+function recordFinish(playerId){
+  const p = playerById(playerId); if (!p) return;
   const place = gameState.standings.length + 1;
-  gameState.standings.push({id: playerId, name: player.name, place});
-  gameState.finishQueue.push({id: playerId, name: player.name, place});
-
-  gameState.order = gameState.order.filter(id => id !== playerId);
+  gameState.standings.push({id:playerId, name:p.name, place});
+  gameState.finishQueue.push({id:playerId, name:p.name, place});
+  gameState.order = gameState.order.filter(x => x !== playerId);
   if (gameState.turn >= gameState.order.length) gameState.turn = 0;
-
-  addLog("finish", `🏁 <b>${escapeHtml(player.name)}</b> finished in <b>${place}${["st","nd","rd"][place-1] || "th"} place</b>!`);
-
+  addLog("finish", `🏁 <b>${escapeHtml(p.name)}</b> finished in <b>${place}${["st","nd","rd"][place-1]||"th"} place</b>!`);
   if (gameState.order.length === 1) {
-    const lastId = gameState.order[0];
-    const lastPlayer = playerById(lastId);
-    if (lastPlayer) {
-      const lastPlace = place + 1;
-      gameState.standings.push({id: lastId, name: lastPlayer.name, place: lastPlace});
-      gameState.finishQueue.push({id: lastId, name: lastPlayer.name, place: lastPlace});
-      addLog("finish", `🏁 <b>${escapeHtml(lastPlayer.name)}</b> finished in <b>${lastPlace}${["st","nd","rd"][lastPlace-1] || "th"} place</b>.`);
-      gameState.order = [];
+    const last = playerById(gameState.order[0]);
+    if (last) {
+      const lp = place + 1;
+      gameState.standings.push({id:last.id, name:last.name, place:lp});
+      gameState.finishQueue.push({id:last.id, name:last.name, place:lp});
+      addLog("finish", `🏁 <b>${escapeHtml(last.name)}</b> finished in <b>${lp}${["st","nd","rd"][lp-1]||"th"} place</b>.`);
     }
-    addLog("finish", "🏆 <b>The game is complete!</b> All places decided.");
+    gameState.order = [];
+    addLog("finish","🏆 <b>The game is complete!</b> All places decided.");
   }
 }
 
-function finishClaim(roundWinnerId, message) {
-  gameState.claim = null;
-  gameState.lastPlay = null;
-  gameState.passCount = 0;
-  gameState.pendingWinner = null;
-  const idx = gameState.order.indexOf(roundWinnerId);
-  gameState.turn = idx >= 0 ? idx : 0;
-  addLog("info", message);
-}
-
-function handleAction(playerId, message) {
+function handleAction(playerId, msg){
   if (!isHost || !gameState || !gameState.started) return;
   if (gameState.order.length < 2) return;
-
   const currentId = gameState.order[gameState.turn % gameState.order.length];
-  if (currentId !== playerId) {
-    broadcastState();
-    return;
-  }
+  if (currentId !== playerId) { broadcastState(); return; }
+  const player = playerById(playerId); if (!player) return;
 
-  const player = playerById(playerId);
-  if (!player) return;
-
-  if (message.type === "play") {
-    if (gameState.pendingWinner) {
-      addLog("info", "Decide whether to doubt or accept the final claim first.");
-      broadcastState();
-      return;
-    }
-
-    let claimedRank = String(message.claimedRank || "").toUpperCase();
-    if (!RANKS.includes(claimedRank)) {
-      addLog("info", "Invalid claim rank.");
-      broadcastState();
-      return;
-    }
-
-    if (gameState.claim && claimedRank !== gameState.claim.rank) {
-      broadcastState();
-      return;
-    }
-
-    let indices = Array.isArray(message.indices) ? [...new Set(message.indices)] : [];
-    indices = indices.filter(Number.isInteger).sort((a,b) => b-a);
-
+  if (msg.type === "play") {
+    if (gameState.pendingWinner) { addLog("info","Doubt or accept the final claim first."); broadcastState(); return; }
+    let claimedRank = String(msg.claimedRank||"").toUpperCase();
+    if (!RANKS.includes(claimedRank)) { addLog("info","Invalid rank."); broadcastState(); return; }
+    if (gameState.claim && claimedRank !== gameState.claim.rank) { broadcastState(); return; }
+    let indices = Array.isArray(msg.indices) ? [...new Set(msg.indices)] : [];
+    indices = indices.filter(Number.isInteger).sort((a,b)=>b-a);
     if (indices.length < 1 || indices.length > MAX_PLAY ||
-        indices.some(index => index < 0 || index >= player.hand.length)) {
-      addLog("info", `Choose 1–${MAX_PLAY} valid cards.`);
-      broadcastState();
-      return;
+        indices.some(i => i < 0 || i >= player.hand.length)) {
+      addLog("info", `Choose 1–${MAX_PLAY} valid cards.`); broadcastState(); return;
     }
-
-    const cards = indices.map(index => player.hand[index]);
-    for (const index of indices) player.hand.splice(index, 1);
-
+    const cards = indices.map(i => player.hand[i]);
+    for (const i of indices) player.hand.splice(i,1);
     gameState.pile.push(...cards);
-    // NOTE: real cards are NEVER logged or broadcast on play — only the claimed rank.
-    gameState.lastPlay = {playerId, count: cards.length, rank: claimedRank, cards};
+    gameState.lastPlay = {playerId, count:cards.length, rank:claimedRank, cards};
     gameState.passCount = 0;
-
     if (!gameState.claim) {
-      gameState.claim = {rank: claimedRank, starterId: playerId};
-      addLog("play", `<b>${escapeHtml(player.name)}</b> opened a claim of <b>${escapeHtml(claimedRank)}</b> with <b>${cards.length}</b> card(s) — face down. 🂠`);
+      gameState.claim = {rank:claimedRank, starterId:playerId};
+      addLog("play", `<b>${escapeHtml(player.name)}</b> claimed <b>${claimedRank}</b> ×${cards.length} — face down. <span class="mini-cards">${'<span class="mini-card back">🂠</span>'.repeat(cards.length)}</span>`);
     } else {
-      addLog("play", `<b>${escapeHtml(player.name)}</b> continued the <b>${escapeHtml(claimedRank)}</b> claim with <b>${cards.length}</b> card(s) — face down. 🂠`);
+      addLog("play", `<b>${escapeHtml(player.name)}</b> continued <b>${claimedRank}</b> ×${cards.length} — face down. <span class="mini-cards">${'<span class="mini-card back">🂠</span>'.repeat(cards.length)}</span>`);
     }
-
     if (player.hand.length === 0) {
       gameState.pendingWinner = playerId;
-      addLog("info", `<b>${escapeHtml(player.name)}</b> has played their last card. The next player must doubt or accept.`);
+      addLog("info", `<b>${escapeHtml(player.name)}</b> played their last card. The next player must doubt or accept.`);
     }
-
-    nextTurn();
-    broadcastState();
-    return;
+    nextTurn(); broadcastState(); return;
   }
 
-  if (message.type === "doubt") {
-    if (!gameState.claim || !gameState.lastPlay) {
-      addLog("info", "There is no claim to doubt.");
-      broadcastState();
-      return;
-    }
-
+  if (msg.type === "doubt") {
+    if (!gameState.claim || !gameState.lastPlay) { addLog("info","No claim to doubt."); broadcastState(); return; }
     const play = gameState.lastPlay;
-    const truthful = play.cards.every(card => rankOf(card) === play.rank);
+    const truthful = play.cards.every(c => rankOf(c) === play.rank);
     const bluffer = playerById(play.playerId);
-
     const penalized = playerById(truthful ? playerId : play.playerId);
-    if (!penalized) {
-      broadcastState();
-      return;
-    }
-
+    if (!penalized) { broadcastState(); return; }
     const roundWinnerId = truthful ? play.playerId : playerId;
     const roundWinner = playerById(roundWinnerId);
-
-    // Cards stay secret — only the verdict (true / bluff) is announced.
-    addLog("doubt", `<b>${escapeHtml(player.name)}</b> doubted <b>${escapeHtml(bluffer?.name || "?")}</b>'s claim of <b>${escapeHtml(play.rank)}</b>. The claim was <b>${truthful ? "TRUE ✅" : "A BLUFF ❌"}</b>. The played cards stay hidden. 🂠`);
-
+    /* Cards stay secret — only TRUE / BLUFF verdict is announced */
+    addLog("doubt", `<b>${escapeHtml(player.name)}</b> doubted <b>${escapeHtml(bluffer?.name||"?")}</b>'s claim of <b>${escapeHtml(play.rank)}</b> — it was <b>${truthful ? "TRUE ✅" : "A BLUFF ❌"}</b>. Cards stay hidden. 🂠`);
     if (gameState.pile.length > 0) {
-      const takenCards = gameState.pile.splice(0);
-      penalized.hand.push(...takenCards);
-      penalized.hand.sort();
-      addLog("penalty", `⚠️ The whole pile (${takenCards.length} card(s)) goes to <b>${escapeHtml(penalized.name)}</b>'s hand.`);
+      const taken = gameState.pile.splice(0);
+      penalized.hand.push(...taken); penalized.hand.sort();
+      addLog("penalty", `⚠️ The pile (${taken.length} card(s)) goes to <b>${escapeHtml(penalized.name)}</b>'s hand.`);
     }
-
-    finishClaim(
-      roundWinnerId,
-      `<b>${escapeHtml(roundWinner?.name || "Player")}</b> wins the round and throws the first card of the next claim — it is their turn.`
-    );
-
-    broadcastState();
-    return;
+    gameState.claim = null; gameState.lastPlay = null; gameState.passCount = 0; gameState.pendingWinner = null;
+    const idx = gameState.order.indexOf(roundWinnerId);
+    gameState.turn = idx >= 0 ? idx : 0;
+    addLog("info", `<b>${escapeHtml(roundWinner?.name||"Player")}</b> wins the round and throws first next claim.`);
+    broadcastState(); return;
   }
 
-  if (message.type === "pass") {
-    if (!gameState.claim) {
-      broadcastState();
-      return;
-    }
-
+  if (msg.type === "pass") {
+    if (!gameState.claim) { broadcastState(); return; }
     if (gameState.pendingWinner) {
-      const finisherId = gameState.pendingWinner;
-      gameState.pile = [];
-      gameState.claim = null;
-      gameState.lastPlay = null;
-      gameState.passCount = 0;
-      gameState.pendingWinner = null;
-      recordFinish(finisherId);
-
+      const fin = gameState.pendingWinner;
+      gameState.pile = []; gameState.claim = null; gameState.lastPlay = null;
+      gameState.passCount = 0; gameState.pendingWinner = null;
+      recordFinish(fin);
       if (gameState.order.length === 0) {
-        addLog("finish", "🏆 <b>The game is complete!</b> All places decided.");
+        addLog("finish","🏆 <b>The game is complete!</b>");
       } else {
         if (gameState.turn >= gameState.order.length) gameState.turn = 0;
-        const nextPlayer = playerById(gameState.order[gameState.turn]);
-        addLog("info", `The remaining players continue for the next place! <b>${escapeHtml(nextPlayer?.name || "?")}</b> throws the first card of the next claim — it is their turn.`);
+        const np = playerById(gameState.order[gameState.turn]);
+        addLog("info", `The others play on! <b>${escapeHtml(np?.name||"?")}</b> throws first next claim.`);
       }
-      broadcastState();
-      return;
+      broadcastState(); return;
     }
-
     gameState.passCount++;
     if (gameState.passCount >= gameState.order.length - 1) {
       gameState.pile = [];
-      const nextId = gameState.order[(gameState.turn + 1) % gameState.order.length];
-      const nextPlayer = playerById(nextId);
-
-      gameState.claim = null;
-      gameState.lastPlay = null;
-      gameState.passCount = 0;
-      gameState.pendingWinner = null;
+      const nextId = gameState.order[(gameState.turn+1) % gameState.order.length];
+      const np = playerById(nextId);
+      gameState.claim = null; gameState.lastPlay = null;
+      gameState.passCount = 0; gameState.pendingWinner = null;
       gameState.turn = gameState.order.indexOf(nextId);
-
-      addLog("info",
-        `Everyone passed. The pile was removed from the game unseen. ` +
-        `<b>${escapeHtml(nextPlayer?.name || "The next player")}</b> throws the first card of the next claim — it is their turn.`
-      );
+      addLog("info", `Everyone passed. The pile was removed unseen. <b>${escapeHtml(np?.name||"Next player")}</b> throws first next claim.`);
     } else {
       addLog("info", `<b>${escapeHtml(player.name)}</b> passed (accepts the <b>${escapeHtml(gameState.claim.rank)}</b> claim).`);
       nextTurn();
     }
-    broadcastState();
-    return;
+    broadcastState(); return;
   }
 }
 
-function sendAction(message) {
-  if (isHost) handleAction(peer.id, message);
-  else if (hostConn?.open) hostConn.send(message);
+function sendAction(msg){
+  if (isHost) handleAction(peer.id, msg);
+  else if (hostConn?.open) hostConn.send(msg);
 }
 
-function cardHtml(card, index, isSelected, disabled) {
-  const red = suitOf(card) === "♥" || suitOf(card) === "♦";
-  const rank = rankOf(card);
-  const suit = suitOf(card);
-  return `<button class="card ${red ? "red" : ""} ${isSelected ? "selected" : ""}"
-    data-index="${index}" ${disabled ? "disabled" : ""}
-    aria-pressed="${isSelected}">
-    <span class="corner">${escapeHtml(rank)}</span>
-    <span class="suit">${suit}</span>
-  </button>`;
+function cardHtml(card, index, isSel, disabled){
+  const red = suitOf(card)==="♥"||suitOf(card)==="♦";
+  return `<button class="card ${red?"red":""} ${isSel?"selected":""}" data-index="${index}" ${disabled?"disabled":""} aria-pressed="${isSel}">
+    <span class="corner">${escapeHtml(rankOf(card))}</span><span class="suit">${suitOf(card)}</span></button>`;
 }
+const PLACE_MEDALS = {1:"🥇",2:"🥈",3:"🥉"};
+const PLACE_TROPHIES = {1:"🏆",2:"🥈",3:"🥉"};
+const ORDINALS = {1:"1st place",2:"2nd place",3:"3rd place"};
+const ordinal = n => ORDINALS[n] || n+"th place";
 
-const PLACE_MEDALS = {1:"🥇", 2:"🥈", 3:"🥉"};
-const PLACE_TROPHIES = {1:"🏆", 2:"🥈", 3:"🥉"};
-const ORDINALS = {1:"1st place", 2:"2nd place", 3:"3rd place"};
-const ordinal = n => ORDINALS[n] || n + "th place";
-
-function pumpPopupQueue(state) {
+function pumpPopupQueue(state){
   if (popupQueue.length) return;
-  const queue = state.finishQueue || [];
-  if (shownFinishCount >= queue.length) return;
-
-  const event = queue[shownFinishCount];
-  shownFinishCount++;
-  const remaining = queue.length - shownFinishCount;
-
-  const isGameOver = (state.order || []).length < 2;
-  const medal = PLACE_TROPHIES[event.place] || "🎖️";
-  $("winTrophy").textContent = medal;
-  $("winTitle").textContent = event.place === 1
-    ? "Congratulations! You are the winner!"
-    : `Congratulations — ${ordinal(event.place)}!`;
-  $("winWho").textContent = `${event.name} ${medal}`;
-  $("winSub").textContent = isGameOver && remaining === 0
-    ? "The game is complete. Final standings:"
-    : `Finished ${ordinal(event.place)}. The remaining players keep playing!`;
-
-  $("winStandings").innerHTML = (state.standings || []).map(entry =>
-    `<li>${PLACE_MEDALS[entry.place] || entry.place + "."} <b>${escapeHtml(entry.name)}</b> — ${ordinal(entry.place)}</li>`
-  ).join("");
-
-  $("popupCount").textContent = remaining > 0
-    ? `${remaining} more announcement${remaining > 1 ? "s" : ""} to show…`
-    : "";
+  const q = state.finishQueue || [];
+  if (shownFinishCount >= q.length) return;
+  const ev = q[shownFinishCount]; shownFinishCount++;
+  const remaining = q.length - shownFinishCount;
+  const over = (state.order||[]).length < 2;
+  $("winTrophy").textContent = PLACE_TROPHIES[ev.place] || "🎖️";
+  $("winTitle").textContent = ev.place===1 ? "Congratulations! You are the winner!" : `Congratulations — ${ordinal(ev.place)}!`;
+  $("winWho").textContent = `${ev.name} ${PLACE_TROPHIES[ev.place]||"🎖️"}`;
+  $("winSub").textContent = over && remaining===0 ? "The game is complete. Final standings:" : `Finished ${ordinal(ev.place)}. The rest keep playing!`;
+  $("winStandings").innerHTML = (state.standings||[]).map(e =>
+    `<li>${PLACE_MEDALS[e.place]||e.place+"."} <b>${escapeHtml(e.name)}</b> — ${ordinal(e.place)}</li>`).join("");
+  $("popupCount").textContent = remaining>0 ? `${remaining} more announcement${remaining>1?"s":""} to show…` : "";
   $("winOverlay").classList.remove("hidden");
 }
 
-function render() {
+function render(){
   const state = getMyState();
-  if (!state) return;
+  if (!state) { $("actions").classList.add("hidden"); return; }
 
-  const rankNames = {A:"Aces", J:"Jacks", Q:"Queens", K:"Kings"};
-  const claimLabel = rank => rankNames[rank] || rank;
-
+  const rankNames = {A:"Aces",J:"Jacks",Q:"Queens",K:"Kings"};
+  const claimLabel = r => rankNames[r] || r;
   $("roomLabel").textContent = state.roomCode;
 
-  const standingFor = id => state.standings.find(entry => entry.id === id) || null;
+  const standingFor = id => state.standings.find(e => e.id===id) || null;
   const myStanding = standingFor(state.yourId);
   const activeOrder = state.order || [];
   const gameRunning = state.started && activeOrder.length >= 2;
-  const turnPlayer = state.players.find(player => player.id === state.turn);
-  const currentPlayersTurn = state.turn === state.yourId && !myStanding;
-  const pending = state.players.find(player => player.id === state.pendingWinner);
+  const turnPlayer = state.players.find(p => p.id === state.turn);
+  const myTurn = state.turn === state.yourId && !myStanding;
+  const pending = state.players.find(p => p.id === state.pendingWinner);
 
-  $("players").innerHTML = state.players.map(player => {
-    const standing = standingFor(player.id);
-    const stillIn = activeOrder.includes(player.id);
-    const medal = standing ? (PLACE_MEDALS[standing.place] || "") : "";
-    return `
-    <div class="player ${stillIn && state.turn === player.id && gameRunning ? "current" : ""} ${standing ? "done" : ""}">
-      <div class="player-name">${escapeHtml(player.name)}${player.id === state.yourId ? " (you)" : ""}
-        <span class="medal">${medal}</span></div>
-      <div class="player-meta">${standing
-        ? `Finished — ${ordinal(standing.place)}`
-        : `${player.count} card(s) in hand`}</div>
-    </div>`;
+  $("players").innerHTML = state.players.map(p => {
+    const st = standingFor(p.id);
+    const stillIn = activeOrder.includes(p.id);
+    return `<div class="player ${stillIn && state.turn===p.id && gameRunning ? "current":""} ${st?"done":""}">
+      <div class="player-name">${escapeHtml(p.name)}${p.id===state.yourId?" (you)":""} ${st?(PLACE_MEDALS[st.place]||""):""}</div>
+      <div class="player-meta">${st ? `Finished — ${ordinal(st.place)}` : `${p.count} card(s) in hand`}</div></div>`;
   }).join("");
 
   if (!state.started) {
     $("turnTitle").textContent = "Waiting in the lobby";
-    $("turnHelp").textContent = isHost
-      ? "At least two players are needed. Start when everyone has joined."
-      : "The host will start when everyone is ready.";
+    $("turnHelp").textContent = isHost ? "Need at least 2 players. Start when everyone joined." : "The host will start the game.";
   } else if (!gameRunning) {
     $("turnTitle").textContent = "🏁 Game complete!";
-    $("turnHelp").textContent = isHost
-      ? "All places decided. Start a new round when you're ready."
-      : "All places decided. Waiting for the host to start a new round.";
+    $("turnHelp").textContent = isHost ? "Start a new round when ready." : "Waiting for the host to start a new round.";
   } else if (myStanding) {
-    $("turnTitle").textContent = `${PLACE_MEDALS[myStanding.place] || "🎖️"} You finished ${ordinal(myStanding.place)}!`;
-    $("turnHelp").textContent = "Watch the remaining players battle for the next place.";
-  } else if (currentPlayersTurn && pending) {
-    $("turnTitle").textContent = "⚖️ Your decision: doubt or accept";
-    $("turnHelp").textContent = `${pending.name} has played their last card. Doubt the claim or accept it — if you accept, they finish.`;
-  } else if (currentPlayersTurn) {
+    $("turnTitle").textContent = `${PLACE_MEDALS[myStanding.place]||"🎖️"} You finished ${ordinal(myStanding.place)}!`;
+    $("turnHelp").textContent = "Watch the remaining players.";
+  } else if (myTurn && pending) {
+    $("turnTitle").textContent = "⚖️ Doubt or accept?";
+    $("turnHelp").textContent = `${pending.name} played their last card. Doubt it, or accept — then they finish.`;
+  } else if (myTurn) {
     $("turnTitle").textContent = "🎯 Your turn";
-    if (state.claim) {
-      $("turnHelp").textContent = `The ${claimLabel(state.claim.rank)} claim is open — continue it (1–${MAX_PLAY} cards), doubt the last play, or pass.`;
-    } else {
-      $("turnHelp").textContent = `No claim is open. Select 1–${MAX_PLAY} cards, then tap a rank in the panel to start a new claim.`;
-    }
+    $("turnHelp").textContent = state.claim
+      ? `The ${claimLabel(state.claim.rank)} claim is open — continue it (1–${MAX_PLAY}), doubt, or pass.`
+      : `No claim open. Select 1–${MAX_PLAY} cards, then tap a rank.`;
   } else {
-    $("turnTitle").textContent = `⏳ ${turnPlayer?.name || "Another player"}'s turn`;
-    $("turnHelp").textContent = "Wait for the current player to act.";
+    $("turnTitle").textContent = `⏳ ${turnPlayer?.name||"Another player"}'s turn`;
+    $("turnHelp").textContent = "Wait for your turn.";
   }
 
+  /* TABLE — shows only the CLAIMED rank, never real cards */
   if (gameRunning) {
-    const lastPlayer = state.lastPlay
-      ? state.players.find(player => player.id === state.lastPlay.playerId)?.name || "a player"
-      : null;
-
+    const lastPlayer = state.lastPlay ? state.players.find(p => p.id === state.lastPlay.playerId)?.name || "a player" : null;
     $("tableInfo").innerHTML =
       (state.claim
-        ? `<b>🔒 Open claim:</b> <b>${escapeHtml(claimLabel(state.claim.rank))}</b> — everyone must continue this rank until it is finished.<br>`
-        : `<b>No open claim.</b> The next player to play chooses any rank.<br>`) +
-      `<span class="pilecount">Cards on the table: ${state.pileCount}</span>` +
+        ? `<b>🔒 Open claim:</b> <b>${escapeHtml(claimLabel(state.claim.rank))}</b> — everyone continues this rank.<br>`
+        : `<b>No open claim.</b> The next player picks any rank.<br>`) +
+      `<span class="pilecount">Cards on table: ${state.pileCount}</span>` +
       (state.lastPlay
-        ? `<br><b>Last play:</b> ${state.lastPlay.count} card(s), claimed as <b>${escapeHtml(claimLabel(state.lastPlay.rank))}</b>, from ${escapeHtml(lastPlayer)} — face down.`
-        : "<br>No cards have been played yet.");
+        ? `<br><b>Last play:</b> ${state.lastPlay.count} card(s) <span class="mini-cards">${'<span class="mini-card back">🂠</span>'.repeat(Math.min(state.lastPlay.count,4))}</span> claimed as <b>${escapeHtml(claimLabel(state.lastPlay.rank))}</b> by ${escapeHtml(lastPlayer)} — face down.`
+        : "<br>No cards played yet.");
   } else if (state.started) {
-    const list = state.standings.map(entry =>
-      `${PLACE_MEDALS[entry.place] || entry.place + "."} <b>${escapeHtml(entry.name)}</b> — ${ordinal(entry.place)}`
-    ).join("<br>");
-    $("tableInfo").innerHTML = `<b>Final standings:</b><br>${list}`;
+    $("tableInfo").innerHTML = "<b>Final standings:</b><br>" + state.standings.map(e =>
+      `${PLACE_MEDALS[e.place]||e.place+"."} <b>${escapeHtml(e.name)}</b> — ${ordinal(e.place)}`).join("<br>");
   } else {
-    $("tableInfo").innerHTML = "The table is empty. Start the game to deal the cards.";
+    $("tableInfo").innerHTML = "The table is empty. Start the game to deal.";
   }
 
-  const canPlay = gameRunning && !myStanding &&
-    currentPlayersTurn && !state.pendingWinner;
+  const canPlay = gameRunning && !myStanding && myTurn && !state.pendingWinner;
   const hand = state.yourHand || [];
-
-  $("hand").innerHTML = hand.map(item =>
-    cardHtml(item.card, item.index, selected.has(item.index), !canPlay)
-  ).join("");
-
-  document.querySelectorAll("#hand .card").forEach(button => {
-    button.onclick = () => {
-      const index = Number(button.dataset.index);
-      if (selected.has(index)) selected.delete(index);
-      else if (selected.size < MAX_PLAY) selected.add(index);
+  $("hand").innerHTML = hand.map(it => cardHtml(it.card, it.index, selected.has(it.index), !canPlay)).join("");
+  document.querySelectorAll("#hand .card").forEach(btn => {
+    btn.onclick = () => {
+      const i = Number(btn.dataset.index);
+      if (selected.has(i)) selected.delete(i);
+      else if (selected.size < MAX_PLAY) selected.add(i);
       render();
     };
   });
 
-  const rankPanel = $("rankPanel");
+  const rp = $("rankPanel");
   if (canPlay && !state.claim) {
-    rankPanel.classList.remove("hidden");
-    $("rankGrid").innerHTML = RANKS.map(rank =>
-      `<button class="rank-btn" data-rank="${rank}" ${selected.size < 1 ? "disabled" : ""}>
-        ${rank}${rankNames[rank] ? `<div style="font-size:10px;font-weight:600">${rankNames[rank]}</div>` : ""}
-      </button>`
-    ).join("");
-
-    document.querySelectorAll("#rankGrid .rank-btn").forEach(button => {
-      button.onclick = () => {
-        const rank = button.dataset.rank;
+    rp.classList.remove("hidden");
+    $("rankGrid").innerHTML = RANKS.map(r =>
+      `<button class="rank-btn" data-rank="${r}" ${selected.size<1?"disabled":""}>${r}${rankNames[r]?`<div style="font-size:9px;font-weight:600">${rankNames[r]}</div>`:""}</button>`).join("");
+    document.querySelectorAll("#rankGrid .rank-btn").forEach(btn => {
+      btn.onclick = () => {
         if (selected.size < 1) return;
-        const indices = [...selected];
-        selected.clear();
-        sendAction({type:"play", indices, claimedRank: rank});
+        const indices = [...selected]; selected.clear();
+        sendAction({type:"play", indices, claimedRank: btn.dataset.rank});
       };
     });
-  } else {
-    rankPanel.classList.add("hidden");
-  }
+  } else rp.classList.add("hidden");
 
-  $("handHint").textContent = myStanding
-    ? "You have finished. Enjoy watching the rest of the game!"
-    : !state.started
-      ? "Your cards will appear when the host starts the game."
-      : selected.size
-        ? `${selected.size} card(s) selected (max ${MAX_PLAY}).` +
-          (canPlay && !state.claim ? " Now tap a rank in the panel below to throw them." : "")
-        : canPlay
-          ? (state.claim
-              ? `Select 1–${MAX_PLAY} cards to continue the ${claimLabel(state.claim.rank)} claim.`
-              : `Select 1–${MAX_PLAY} cards to start a new claim.`)
-          : "You can act on your turn.";
+  $("handHint").textContent = myStanding ? "You finished — enjoy watching!"
+    : !state.started ? "Cards appear when the host starts."
+    : selected.size ? `${selected.size} selected (max ${MAX_PLAY}).` + (canPlay && !state.claim ? " Tap a rank below." : "")
+    : canPlay ? (state.claim ? `Select 1–${MAX_PLAY} for the ${claimLabel(state.claim.rank)} claim.` : `Select 1–${MAX_PLAY} cards.`)
+    : "Act on your turn.";
 
-  let actions = "";
+  /* ACTION BAR (fixed bottom, always visible) */
+  const A = $("actions");
+  A.classList.remove("hidden");
+  let html = "";
   if (!state.started) {
-    actions = isHost
-      ? `<button id="startBtn" class="primary" ${state.players.length < 2 ? "disabled" : ""}>▶ Start game</button>`
+    html = isHost
+      ? `<button id="startBtn" class="primary" ${state.players.length<2?"disabled":""}>▶ Start game</button>`
       : `<span class="muted">Waiting for the host…</span>`;
   } else if (!gameRunning) {
-    actions = isHost
-      ? `<button id="restartBtn" class="primary">↻ Start new round</button>`
-      : `<span class="muted">Waiting for the host…</span>`;
+    html = isHost ? `<button id="restartBtn" class="primary">↻ New round</button>` : `<span class="muted">Waiting for the host…</span>`;
   } else if (myStanding) {
-    actions = `<span class="muted">You finished in ${ordinal(myStanding.place)}. Waiting for the others…</span>`;
-  } else if (currentPlayersTurn && state.pendingWinner) {
-    actions = `<button id="doubtBtn" class="danger">🕵 I doubt it</button>
-               <button id="passBtn" class="primary">✔ Accept — player finishes</button>`;
-  } else if (currentPlayersTurn) {
+    html = `<span class="muted">You finished ${ordinal(myStanding.place)}. Waiting…</span>`;
+  } else if (myTurn && state.pendingWinner) {
+    html = `<button id="doubtBtn" class="danger">🕵 Doubt it</button><button id="passBtn" class="primary">✔ Accept — they finish</button>`;
+  } else if (myTurn) {
     if (state.claim) {
-      actions = `<button id="playBtn" class="primary" ${selected.size < 1 ? "disabled" : ""}>
-          ▶ Continue claim (${claimLabel(state.claim.rank)}) with ${selected.size} card(s)</button>
-        <button id="doubtBtn" class="danger">🕵 I doubt it</button>
-        <button id="passBtn">✔ Pass / accept</button>`;
+      html = `<button id="playBtn" class="primary" ${selected.size<1?"disabled":""}>▶ Throw ${selected.size} as ${claimLabel(state.claim.rank)}</button>
+              <button id="doubtBtn" class="danger">🕵 Doubt</button><button id="passBtn">✔ Pass</button>`;
     } else {
-      actions = `<span class="muted">Select your card(s) above, then tap a rank in the panel to throw them.</span>`;
+      html = `<span class="muted">Select card(s), then tap a rank in the panel.</span>`;
     }
   } else {
-    actions = `<span class="muted">Waiting for your turn…</span>`;
+    html = `<span class="muted">Waiting for your turn…</span>`;
   }
-
-  $("actions").innerHTML = actions;
+  $("actionsWrap").innerHTML = html;
 
   if ($("startBtn")) $("startBtn").onclick = startGame;
   if ($("restartBtn")) $("restartBtn").onclick = startGame;
-  if ($("playBtn")) {
-    $("playBtn").onclick = () => {
-      const indices = [...selected];
-      selected.clear();
-      sendAction({type:"play", indices, claimedRank: state.claim.rank});
-    };
-  }
-  if ($("doubtBtn")) $("doubtBtn").onclick = () => {
-    selected.clear();
-    sendAction({type:"doubt"});
+  if ($("playBtn")) $("playBtn").onclick = () => {
+    const indices = [...selected]; selected.clear();
+    sendAction({type:"play", indices, claimedRank: state.claim.rank});
   };
-  if ($("passBtn")) $("passBtn").onclick = () => {
-    selected.clear();
-    sendAction({type:"pass"});
-  };
+  if ($("doubtBtn")) $("doubtBtn").onclick = () => { selected.clear(); sendAction({type:"doubt"}); };
+  if ($("passBtn")) $("passBtn").onclick = () => { selected.clear(); sendAction({type:"pass"}); };
 
-  // Log — face-down placeholders only; real card values are never shown or sent.
-  $("log").innerHTML = (state.log || []).map(entry => {
-    return `<div class="log-entry">
-      <span class="log-tag ${escapeHtml(entry.tag || "info")}">${escapeHtml((entry.tag || "info").toUpperCase())}</span>
-      <span>${sanitizeLogText(entry.text)}</span>
-    </div>`;
-  }).join("");
-  const logBox = $("log");
-  logBox.scrollTop = logBox.scrollHeight;
+  /* LOG — face-down tokens only */
+  $("log").innerHTML = (state.log||[]).map(e =>
+    `<div class="log-entry"><span class="log-tag ${escapeHtml(e.tag||"info")}">${escapeHtml((e.tag||"info").toUpperCase())}</span><span>${sanitizeLogText(e.text)}</span></div>`).join("");
+  const lb = $("log"); lb.scrollTop = lb.scrollHeight;
 
   pumpPopupQueue(state);
 }
 
 $("winCloseBtn").onclick = () => {
   $("winOverlay").classList.add("hidden");
-  const state = getMyState();
-  if (state) pumpPopupQueue(state);
+  const s = getMyState(); if (s) pumpPopupQueue(s);
 };
 
-function showGame() {
+function showGame(){
   $("lobby").classList.add("hidden");
   $("game").classList.remove("hidden");
 }
 
-$("createBtn").onclick = () => {
-  if (!window.Peer) {
-    $("status").textContent = "PeerJS did not load. Check your internet connection and reload.";
-    return;
-  }
+function peerConfig(){
+  return { debug:0, config:{ iceServers:[
+    {urls:"stun:stun.l.google.com:19302"},
+    {urls:"stun:stun1.l.google.com:19302"},
+    {urls:"stun:stun.cloudflare.com:3478"}
+  ]}};
+}
 
+$("createBtn").onclick = () => {
+  if (!window.Peer) { $("status").textContent = "PeerJS did not load. Check internet and reload."; return; }
   myName = sanitizeName($("nameInput").value, "Host");
   roomCode = cleanCode($("roomInput").value);
   if (roomCode.length < 5) roomCode = newRoomCode();
-
-  $("createBtn").disabled = true;
-  $("joinBtn").disabled = true;
+  $("createBtn").disabled = true; $("joinBtn").disabled = true;
   $("status").textContent = "Creating room…";
-
-  peer = new Peer("tash-" + roomCode, {
-    debug: 0,
-    config: { iceServers: [
-      { urls: "stun:stun.l.google.com:19302" },
-      { urls: "stun:stun1.l.google.com:19302" },
-      { urls: "stun:stun.cloudflare.com:3478" }
-    ]}
-  });
-
+  peer = new Peer("tash-"+roomCode, peerConfig());
   peer.on("open", () => {
-    isHost = true;
-    gameState = freshGame();
-    addPlayer(peer.id, myName);
-    showGame();
-    $("connectionLabel").textContent = "Host connected";
-    render();
+    isHost = true; gameState = freshGame();
+    addPlayer(peer.id, myName); showGame();
+    $("connectionLabel").textContent = "Host connected"; render();
   });
-
-  peer.on("connection", connection => {
-    connections[connection.peer] = connection;
-
-    connection.on("data", data => {
+  peer.on("connection", conn => {
+    connections[conn.peer] = conn;
+    conn.on("data", data => {
       if (!data || typeof data.type !== "string") return;
-      if (data.type === "join") addPlayer(connection.peer, data.name);
+      if (data.type === "join") addPlayer(conn.peer, data.name);
       else {
-        // Security: anti-flood — ignore messages faster than 150ms apart
         const now = Date.now();
-        if (now - (lastActionAt[connection.peer] || 0) < 150) return;
-        lastActionAt[connection.peer] = now;
-        handleAction(connection.peer, data);
+        if (now - (lastActionAt[conn.peer]||0) < 150) return;
+        lastActionAt[conn.peer] = now;
+        handleAction(conn.peer, data);
       }
     });
-
-    connection.on("close", () => {
-      delete connections[connection.peer];
+    conn.on("close", () => {
+      delete connections[conn.peer];
       if (gameState && !gameState.started) {
-        gameState.players = gameState.players.filter(player => player.id !== connection.peer);
-        gameState.order = gameState.players.map(player => player.id);
-        addLog("info", "A player left the lobby.");
+        gameState.players = gameState.players.filter(p => p.id !== conn.peer);
+        gameState.order = gameState.players.map(p => p.id);
+        addLog("info","A player left the lobby.");
         broadcastState();
       }
     });
-
-    connection.on("error", () => addLog("info", "A player connection had an error."));
+    conn.on("error", () => addLog("info","A player connection had an error."));
   });
-
-  peer.on("error", error => {
-    $("status").textContent = `Room error: ${error.type}. Try another room code.`;
-    $("createBtn").disabled = false;
-    $("joinBtn").disabled = false;
+  peer.on("error", e => {
+    $("status").textContent = `Room error: ${e.type}. Try another code.`;
+    $("createBtn").disabled = false; $("joinBtn").disabled = false;
   });
 };
 
 $("joinBtn").onclick = () => {
-  if (!window.Peer) {
-    $("status").textContent = "PeerJS did not load. Check your internet connection and reload.";
-    return;
-  }
-
+  if (!window.Peer) { $("status").textContent = "PeerJS did not load. Check internet and reload."; return; }
   myName = sanitizeName($("nameInput").value, "Player");
   roomCode = cleanCode($("roomInput").value);
-
-  if (roomCode.length < 5) {
-    $("status").textContent = "Enter a room code with at least 5 characters.";
-    return;
-  }
-
-  $("createBtn").disabled = true;
-  $("joinBtn").disabled = true;
-  $("status").textContent = "Connecting to room…";
-
-  peer = new Peer({
-    debug: 0,
-    config: { iceServers: [
-      { urls: "stun:stun.l.google.com:19302" },
-      { urls: "stun:stun1.l.google.com:19302" },
-      { urls: "stun:stun.cloudflare.com:3478" }
-    ]}
-  });
-
+  if (roomCode.length < 5) { $("status").textContent = "Enter a room code (min 5 characters)."; return; }
+  $("createBtn").disabled = true; $("joinBtn").disabled = true;
+  $("status").textContent = "Connecting…";
+  peer = new Peer(peerConfig());
   peer.on("open", () => {
-    hostConn = peer.connect("tash-" + roomCode, {reliable:true});
-
+    hostConn = peer.connect("tash-"+roomCode, {reliable:true});
     hostConn.on("open", () => {
       hostConn.send({type:"join", name:myName});
       showGame();
       $("roomLabel").textContent = roomCode;
       $("connectionLabel").textContent = "Connecting";
       $("turnTitle").textContent = "Joining room…";
-      $("turnHelp").textContent = "Waiting for the host to send game information.";
     });
-
     hostConn.on("data", data => {
       if (data?.type === "state") {
         gameState = data.state;
@@ -1210,22 +748,16 @@ $("joinBtn").onclick = () => {
         render();
       }
     });
-
     hostConn.on("close", () => {
       $("connectionLabel").textContent = "Disconnected";
-      $("turnTitle").textContent = "Disconnected from host";
-      $("turnHelp").textContent = "The host connection ended. Reload to rejoin.";
+      $("turnTitle").textContent = "Disconnected";
+      $("turnHelp").textContent = "Reload to rejoin.";
     });
-
-    hostConn.on("error", () => {
-      $("status").textContent = "Could not connect to the host. Check the room code.";
-    });
+    hostConn.on("error", () => { $("status").textContent = "Could not connect. Check the code."; });
   });
-
-  peer.on("error", error => {
-    $("status").textContent = `Connection error: ${error.type}. Check the room code and internet connection.`;
-    $("createBtn").disabled = false;
-    $("joinBtn").disabled = false;
+  peer.on("error", e => {
+    $("status").textContent = `Connection error: ${e.type}.`;
+    $("createBtn").disabled = false; $("joinBtn").disabled = false;
   });
 };
 </script>
