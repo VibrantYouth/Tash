@@ -3,40 +3,41 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Da Tash Laba — Card Game</title>
-
+<title>Da Taash Laba — Card Game</title>
 <style>
   :root {
     color-scheme: dark;
-    --bg1: #0b1220;
-    --bg2: #16233a;
-    --panel: rgba(255,255,255,.07);
-    --line: rgba(255,255,255,.14);
-    --text: #eef4fb;
-    --muted: #9fb0c3;
-    --accent: #4be0c6;
-    --danger: #ff7b7b;
-    --gold: #ffd166;
+    --bg: #071711;
+    --felt: #14513b;
+    --felt-dark: #0c3528;
+    --panel: rgba(16, 31, 29, .88);
+    --line: rgba(196, 232, 204, .16);
+    --text: #f2f7f3;
+    --muted: #a8bdb0;
+    --accent: #70f0c1;
+    --gold: #ffd77a;
+    --danger: #ff8585;
+    --bar-height: 68px;
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
   html, body {
     width: 100%;
-    min-height: 100%;
+    height: 100%;
     margin: 0;
   }
 
   body {
     height: 100dvh;
     overflow: hidden;
-    padding: 8px 10px calc(76px + env(safe-area-inset-bottom));
-    background:
-      radial-gradient(900px 400px at 15% -10%, #1d3a63 0%, transparent 60%),
-      radial-gradient(700px 400px at 110% 20%, #35204d 0%, transparent 55%),
-      linear-gradient(160deg, var(--bg1), var(--bg2));
+    padding: 8px 10px calc(var(--bar-height) + env(safe-area-inset-bottom) + 8px);
     color: var(--text);
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background:
+      radial-gradient(ellipse at 50% 35%, rgba(35, 108, 75, .38), transparent 48%),
+      radial-gradient(ellipse at 0% 0%, #183e30, transparent 45%),
+      linear-gradient(150deg, #071711, #10271f 55%, #081711);
   }
 
   button, input { font: inherit; }
@@ -44,11 +45,11 @@
   button {
     min-height: 42px;
     padding: 8px 12px;
+    color: var(--text);
+    font-weight: 750;
     border: 1px solid var(--line);
     border-radius: 12px;
-    background: rgba(255,255,255,.09);
-    color: var(--text);
-    font-weight: 700;
+    background: rgba(255,255,255,.08);
     cursor: pointer;
     touch-action: manipulation;
   }
@@ -57,31 +58,30 @@
   button:disabled { opacity: .42; cursor: not-allowed; }
 
   button.primary {
+    color: #06281e;
     border-color: transparent;
-    background: linear-gradient(135deg, #35e2c6, #2bb3d9);
-    color: #06241f;
-    font-weight: 800;
+    background: linear-gradient(135deg, #75f0c1, #46c9a2);
   }
 
   button.danger {
-    border-color: rgba(255,123,123,.5);
-    background: linear-gradient(135deg, #7a2f3a, #5b2630);
-    color: #ffe1e1;
+    color: #ffe6e6;
+    border-color: rgba(255,133,133,.4);
+    background: linear-gradient(135deg, #74323b, #52242e);
   }
 
   input {
-    min-height: 46px;
     width: min(100%, 250px);
+    min-height: 46px;
     padding: 10px 13px;
+    color: var(--text);
+    font-size: 16px;
     border: 1px solid var(--line);
     border-radius: 12px;
     background: rgba(0,0,0,.25);
-    color: var(--text);
-    font-size: 16px;
   }
 
   .app {
-    width: min(960px, 100%);
+    width: min(920px, 100%);
     height: 100%;
     min-height: 0;
     margin: 0 auto;
@@ -92,12 +92,10 @@
   h1 {
     flex: 0 0 auto;
     margin: 2px 0;
-    font-size: clamp(20px, 5vw, 29px);
-    letter-spacing: .5px;
-    background: linear-gradient(90deg, #4be0c6, #7db2ff);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #b8ffdc;
+    font-size: clamp(21px, 5vw, 30px);
+    letter-spacing: .6px;
+    text-shadow: 0 2px 18px rgba(87, 240, 183, .18);
   }
 
   .subtitle {
@@ -108,12 +106,22 @@
   }
 
   .panel {
-    padding: 9px 11px;
     margin: 4px 0;
+    padding: 9px 11px;
     border: 1px solid var(--line);
-    border-radius: 14px;
+    border-radius: 15px;
     background: var(--panel);
+    box-shadow: 0 8px 20px rgba(0,0,0,.14);
     backdrop-filter: blur(8px);
+  }
+
+  .section-title {
+    margin: 0 0 6px;
+    color: #a9cdb8;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
   }
 
   .row {
@@ -124,8 +132,8 @@
     gap: 8px;
   }
 
-  .muted { color: var(--muted); }
   .hidden { display: none !important; }
+  .muted { color: var(--muted); }
 
   #status {
     margin-top: 9px;
@@ -150,26 +158,24 @@
 
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .section-title {
-    margin: 0 0 6px;
-    color: var(--muted);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-  }
-
   #lobby {
-    width: min(560px, 100%);
+    width: min(550px, 100%);
     margin: auto;
   }
 
   body.lobby-mode .app {
     justify-content: center;
-    transform: translateY(clamp(18px, 6vh, 55px));
+    transform: translateY(clamp(16px, 5vh, 48px));
   }
 
   body.lobby-mode h1,
   body.lobby-mode .subtitle {
+    width: 100%;
+    text-align: center;
+  }
+
+  body.game-mode h1,
+  body.game-mode .subtitle {
     width: 100%;
     text-align: center;
   }
@@ -186,31 +192,31 @@
     align-items: center;
     gap: 5px;
     padding: 4px 9px;
+    color: #c1d3c8;
+    font-size: 11px;
     border: 1px solid var(--line);
     border-radius: 999px;
-    background: rgba(255,255,255,.04);
-    color: var(--muted);
-    font-size: 11px;
+    background: rgba(255,255,255,.035);
   }
 
   .turnbox {
     margin-top: 6px;
     padding: 7px 10px;
-    border: 1px solid rgba(75,224,198,.25);
+    border: 1px solid rgba(112,240,193,.24);
     border-radius: 11px;
-    background: linear-gradient(135deg, rgba(75,224,198,.13), rgba(125,178,255,.08));
+    background: linear-gradient(135deg, rgba(80,190,142,.14), rgba(255,255,255,.025));
   }
 
   .turnbox strong {
     display: block;
-    font-size: clamp(14px, 3.7vw, 18px);
+    font-size: clamp(14px, 3.5vw, 18px);
   }
 
   #turnHelp { font-size: 11px; line-height: 1.3; }
 
   #players {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
     gap: 5px;
     margin-top: 6px;
   }
@@ -224,11 +230,11 @@
 
   .player.current {
     border-color: var(--accent);
-    box-shadow: 0 0 0 1px var(--accent);
+    box-shadow: 0 0 0 1px rgba(112,240,193,.7), 0 0 12px rgba(112,240,193,.12);
   }
 
-  .player.done { opacity: .62; border-color: rgba(255,209,102,.45); }
-  .player-name { font-weight: 700; font-size: 11px; }
+  .player.done { opacity: .6; }
+  .player-name { font-size: 11px; font-weight: 750; }
   .player-meta { margin-top: 2px; color: var(--muted); font-size: 10px; }
 
   #game {
@@ -243,75 +249,86 @@
 
   #game .panel { flex: 0 0 auto; }
 
+  /* Felt table and face-down cards */
   .table-panel {
     position: relative;
-    min-height: 145px;
+    min-height: 140px;
     overflow: hidden;
+    border-color: rgba(125, 220, 170, .25);
     background:
-      radial-gradient(ellipse at center, rgba(75,224,198,.14), transparent 65%),
-      rgba(18,53,54,.48);
+      radial-gradient(ellipse at center, rgba(76, 167, 111, .2), transparent 72%),
+      rgba(9, 31, 24, .9);
   }
 
   .table-surface {
     position: relative;
+    min-height: 97px;
+    margin-top: 3px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    min-height: 100px;
-    margin-top: 3px;
-    border: 2px solid rgba(75,224,198,.3);
-    border-radius: 48% / 35%;
+    gap: 5px;
+    border: 3px solid rgba(118, 190, 141, .36);
+    border-radius: 50% / 42%;
     background:
-      radial-gradient(ellipse at center, rgba(35,109,91,.62), rgba(12,47,47,.84));
+      radial-gradient(ellipse at center, #1b6848, #11452f 72%, #0e3929);
     box-shadow:
-      inset 0 0 22px rgba(0,0,0,.35),
-      0 4px 14px rgba(0,0,0,.2);
+      inset 0 0 24px rgba(0,0,0,.37),
+      0 5px 14px rgba(0,0,0,.2);
   }
 
-  .table-message {
-    max-width: 90%;
-    color: #e8fff8;
-    font-size: 12px;
-    text-align: center;
+  .table-mark {
+    position: absolute;
+    color: rgba(219, 255, 231, .18);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    pointer-events: none;
   }
 
   #tableClaim {
-    color: var(--gold);
+    z-index: 1;
+    max-width: 90%;
+    color: #fff2c4;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 750;
     text-align: center;
+    text-shadow: 0 1px 4px #10281c;
   }
 
   #tableCards {
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
     gap: 4px;
-    min-height: 43px;
+    min-height: 39px;
   }
 
   .played-card {
+    width: 27px;
+    height: 38px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 42px;
-    border: 1.5px solid rgba(255,255,255,.72);
+    color: #eefff6;
+    font-size: 18px;
+    border: 1px solid rgba(255,255,255,.7);
     border-radius: 6px;
     background:
-      repeating-linear-gradient(45deg, #35558a 0 4px, #243f6b 4px 8px);
-    color: #fff;
-    font-size: 19px;
-    box-shadow: 0 3px 8px rgba(0,0,0,.35);
+      repeating-linear-gradient(45deg, #34644f 0 4px, #244b3d 4px 8px);
+    box-shadow: 0 3px 7px rgba(0,0,0,.35);
     transform: rotate(var(--tilt, 0deg));
   }
 
-  .table-count {
-    color: #cff8eb;
+  #tableCount {
+    z-index: 1;
+    color: #c3e8d3;
     font-size: 10px;
+    text-align: center;
   }
 
   #hand {
@@ -325,19 +342,19 @@
   .card {
     position: relative;
     flex: 0 0 auto;
-    width: clamp(42px, 11vw, 59px);
-    height: clamp(60px, 16vw, 80px);
+    width: clamp(42px, 10.5vw, 58px);
+    height: clamp(58px, 15vw, 78px);
     padding: 0;
-    border: 2px solid rgba(255,255,255,.75);
-    border-radius: 9px;
-    background: linear-gradient(160deg, #fff, #e8edf2);
-    color: #1a2430;
+    color: #1b2630;
     font-size: 16px;
-    font-weight: 800;
-    box-shadow: 0 3px 9px rgba(0,0,0,.34);
+    font-weight: 850;
+    border: 2px solid rgba(255,255,255,.82);
+    border-radius: 9px;
+    background: linear-gradient(155deg, #fff, #e6eee9);
+    box-shadow: 0 3px 8px rgba(0,0,0,.35);
   }
 
-  .card.red { color: #d8334c; }
+  .card.red { color: #ce3348; }
   .card .corner { position: absolute; top: 4px; left: 6px; }
   .card .suit { position: absolute; right: 6px; bottom: 3px; font-size: 20px; }
   .card.selected { outline: 3px solid var(--accent); transform: translateY(-4px); }
@@ -348,9 +365,9 @@
   #rankPanel {
     margin-top: 5px;
     padding: 7px;
-    border: 1px solid rgba(75,224,198,.38);
+    border: 1px solid rgba(112,240,193,.35);
     border-radius: 11px;
-    background: rgba(11,18,32,.92);
+    background: rgba(6, 25, 18, .94);
   }
 
   #rankPanel b {
@@ -362,13 +379,13 @@
 
   #rankGrid {
     display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-template-columns: repeat(7, minmax(0,1fr));
     gap: 5px;
   }
 
   .rank-btn {
     min-width: 0;
-    min-height: 38px;
+    min-height: 37px;
     padding: 3px 1px;
     border-radius: 8px;
     font-size: 14px;
@@ -381,7 +398,12 @@
   }
 
   #logPanel { padding-top: 7px; padding-bottom: 7px; }
-  #log { display: flex; flex-direction: column; gap: 2px; }
+
+  #log {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
 
   .log-entry {
     display: flex;
@@ -389,71 +411,73 @@
     align-items: center;
     gap: 4px;
     padding: 3px 2px;
-    border-bottom: 1px solid rgba(255,255,255,.07);
     color: var(--muted);
     font-size: 10px;
     line-height: 1.25;
+    border-bottom: 1px solid rgba(255,255,255,.06);
   }
 
   .log-entry b { color: var(--text); }
 
   .log-tag {
     flex: 0 0 auto;
-    display: inline-block;
     padding: 1px 5px;
     border-radius: 5px;
     font-size: 8px;
-    font-weight: 800;
+    font-weight: 850;
   }
 
-  .log-tag.play { background: rgba(75,224,198,.18); color: var(--accent); }
-  .log-tag.doubt { background: rgba(255,123,123,.18); color: var(--danger); }
-  .log-tag.penalty, .log-tag.finish { background: rgba(255,209,102,.18); color: var(--gold); }
-  .log-tag.info { background: rgba(125,178,255,.15); color: #9cc3ff; }
+  .log-tag.play { color: var(--accent); background: rgba(112,240,193,.14); }
+  .log-tag.doubt { color: var(--danger); background: rgba(255,133,133,.14); }
+  .log-tag.penalty, .log-tag.finish { color: var(--gold); background: rgba(255,215,122,.14); }
+  .log-tag.info { color: #adcfff; background: rgba(125,178,255,.13); }
 
   .mini-cards { display: inline-flex; flex-wrap: wrap; gap: 2px; }
   .mini-card {
+    width: 18px;
+    height: 24px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 19px;
-    height: 25px;
-    padding: 0 3px;
-    border: 1px solid rgba(255,255,255,.7);
-    border-radius: 4px;
-    background: #fff;
-    color: #1a2430;
+    color: #f2fff8;
     font-size: 9px;
-    font-weight: 800;
-  }
-
-  .mini-card.back {
-    background: linear-gradient(135deg,#35558a,#1d3a63);
-    color: #eef4fb;
+    border: 1px solid rgba(255,255,255,.65);
+    border-radius: 4px;
+    background: repeating-linear-gradient(45deg,#34644f 0 3px,#244b3d 3px 6px);
   }
 
   #actions {
     position: fixed;
     z-index: 30;
-    left: 0;
     right: 0;
     bottom: 0;
+    left: 0;
     padding: 7px 10px calc(7px + env(safe-area-inset-bottom));
     border-top: 1px solid var(--line);
-    background: rgba(11,18,32,.96);
+    background: rgba(7, 23, 17, .97);
     backdrop-filter: blur(12px);
   }
 
   #actions .wrap {
+    width: min(920px, 100%);
+    margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    width: min(960px, 100%);
-    margin: 0 auto;
   }
 
-  #actions button { flex: 1 1 30%; min-height: 42px; padding: 7px 9px; }
-  #actions .muted { flex: 1 1 100%; text-align: center; font-size: 11px; }
+  #actions button {
+    flex: 1 1 28%;
+    min-height: 42px;
+    padding: 7px 8px;
+    font-size: 13px;
+  }
+
+  #actions .muted {
+    flex: 1 1 100%;
+    text-align: center;
+    font-size: 11px;
+  }
 
   #winOverlay {
     position: fixed;
@@ -485,36 +509,37 @@
   .standings { padding: 0; list-style: none; text-align: left; }
   .standings li { padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,.1); }
 
-  /* Center the game name only while the game is open. */
-  body.game-mode h1,
-  body.game-mode .subtitle {
-    text-align: center;
-  }
-
   @media (max-width: 520px) {
-    #players { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .table-panel { min-height: 128px; }
-    .table-surface { min-height: 83px; }
+    #players { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .table-panel { min-height: 125px; }
+    .table-surface { min-height: 82px; }
     #rankGrid { gap: 4px; }
   }
 
-  @media (max-height: 650px) {
-    .panel { padding: 7px 9px; margin: 3px 0; }
-    h1 { font-size: 19px; }
+  @media (max-height: 680px) {
+    .panel { margin: 3px 0; padding: 7px 9px; }
+    h1 { font-size: 20px; }
     .subtitle { margin-bottom: 2px; }
-    .table-panel { min-height: 112px; }
+    .table-panel { min-height: 110px; }
     .table-surface { min-height: 70px; }
-    .card { height: 56px; }
-    .rank-btn { min-height: 34px; }
+    .card { height: 54px; }
+    .rank-btn { min-height: 33px; }
     #players { gap: 3px; margin-top: 4px; }
+  }
+
+  @media (max-height: 520px) {
+    body.lobby-mode .app {
+      justify-content: flex-start;
+      transform: none;
+    }
   }
 </style>
 </head>
 
 <body>
 <main class="app">
-  <h1>🃏 Da Tash Laba</h1>
-  <p class="subtitle">Supports 2 to 8 players</p>
+  <h1>🃏 Da Taash Laba</h1>
+  <p class="subtitle">A multiplayer card game · 2–8 players</p>
 
   <section id="lobby" class="panel">
     <h2 class="section-title">Join a game</h2>
@@ -527,7 +552,7 @@
       <button id="joinBtn">Join room</button>
       <button id="retryBtn" class="hidden">↻ Retry</button>
     </div>
-    <div id="status">The host creates a room and shares the code. Works for 2–8 players. Internet required.</div>
+    <div id="status">The host creates a room and shares the code. Internet is required.</div>
   </section>
 
   <section id="game" class="hidden">
@@ -544,16 +569,17 @@
     </div>
 
     <div class="panel table-panel">
-      <h2 class="section-title">Game table</h2>
+      <h2 class="section-title">The table</h2>
       <div class="table-surface">
-        <div id="tableClaim" class="table-message">The table is ready</div>
+        <span class="table-mark">DA TAASH LABA</span>
+        <div id="tableClaim">The table is ready</div>
         <div id="tableCards"></div>
-        <div id="tableCount" class="table-count">No cards on the table</div>
+        <div id="tableCount">No cards on the table</div>
       </div>
     </div>
 
     <div class="panel">
-      <h2 class="section-title">Your cards</h2>
+      <h2 class="section-title">Your hand</h2>
       <div id="hand"></div>
       <div id="handHint" class="hint"></div>
       <div id="rankPanel" class="hidden">
@@ -563,7 +589,7 @@
     </div>
 
     <div class="panel" id="logPanel">
-      <h2 class="section-title">Recent game activity</h2>
+      <h2 class="section-title">Latest activity · last 2</h2>
       <div id="log"></div>
     </div>
   </section>
@@ -608,14 +634,16 @@ const SIGNALING_SERVERS = [
   {},
   { host: "0.peerjs.com", port: 443, secure: true, path: "/" }
 ];
-let serverIdx = 0;
 
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, ch => ({
   "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
 }[ch]));
 
 function sanitizeName(value, fallback) {
-  const clean = String(value || "").replace(/[^\p{L}\p{N} _-]/gu, "").trim().slice(0,16);
+  const clean = String(value || "")
+    .replace(/[^\p{L}\p{N} _-]/gu, "")
+    .trim()
+    .slice(0,16);
   return clean || fallback;
 }
 
@@ -641,7 +669,7 @@ const roomPeerId = code => "tash-" + code;
 function peerConfig() {
   return {
     debug: 1,
-    ...SIGNALING_SERVERS[serverIdx],
+    ...SIGNALING_SERVERS[0],
     config: {
       iceServers: [
         { urls: "stun:stun.l.google.com:19302" },
@@ -664,9 +692,9 @@ function peerConfig() {
 
 function freshGame() {
   return {
-    started: false, players: [], order: [], standings: [], finishQueue: [],
-    turn: 0, pile: [], claim: null, lastPlay: null, passCount: 0,
-    pendingWinner: null, log: []
+    started:false, players:[], order:[], standings:[], finishQueue:[],
+    turn:0, pile:[], claim:null, lastPlay:null, passCount:0,
+    pendingWinner:null, log:[]
   };
 }
 
@@ -680,29 +708,29 @@ function publicStateFor(id) {
 
   return {
     roomCode,
-    started: gameState.started,
-    players: gameState.players.map(player => ({
-      id: player.id, name: player.name, count: player.hand.length
+    started:gameState.started,
+    players:gameState.players.map(player => ({
+      id:player.id, name:player.name, count:player.hand.length
     })),
-    order: gameState.order.slice(),
-    standings: gameState.standings.slice(),
-    finishQueue: gameState.finishQueue.slice(),
-    turn: turnId,
-    claim: gameState.claim
-      ? { rank: gameState.claim.rank, starterId: gameState.claim.starterId }
+    order:gameState.order.slice(),
+    standings:gameState.standings.slice(),
+    finishQueue:gameState.finishQueue.slice(),
+    turn:turnId,
+    claim:gameState.claim
+      ? {rank:gameState.claim.rank, starterId:gameState.claim.starterId}
       : null,
-    pileCount: gameState.pile.length,
-    lastPlay: gameState.lastPlay
+    pileCount:gameState.pile.length,
+    lastPlay:gameState.lastPlay
       ? {
-          playerId: gameState.lastPlay.playerId,
-          count: gameState.lastPlay.count,
-          rank: gameState.lastPlay.rank
+          playerId:gameState.lastPlay.playerId,
+          count:gameState.lastPlay.count,
+          rank:gameState.lastPlay.rank
         }
       : null,
-    pendingWinner: gameState.pendingWinner,
-    log: gameState.log.slice(-2),
-    yourId: id,
-    yourHand: player ? player.hand.map((card,index) => ({card,index})) : []
+    pendingWinner:gameState.pendingWinner,
+    log:gameState.log.slice(-2),
+    yourId:id,
+    yourHand:player ? player.hand.map((card,index) => ({card,index})) : []
   };
 }
 
@@ -717,7 +745,7 @@ function broadcastState() {
   for (const [id, connection] of Object.entries(connections)) {
     if (connection?.open) {
       try { connection.send({type:"state", state:publicStateFor(id)}); }
-      catch (error) { console.warn("Could not send state", error); }
+      catch (error) { console.warn("Unable to send game state", error); }
     }
   }
 
@@ -750,11 +778,13 @@ function startGame() {
   }
 
   const deck = [];
-  for (const suit of SUITS) for (const rank of RANKS) deck.push(rank + suit);
+  for (const suit of SUITS) {
+    for (const rank of RANKS) deck.push(rank + suit);
+  }
 
   for (let i = deck.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [deck[i], deck[j]] = [deck[j], deck[i]];
+    [deck[i],deck[j]] = [deck[j],deck[i]];
   }
 
   gameState.players.forEach(player => player.hand = []);
@@ -797,8 +827,8 @@ function recordFinish(playerId) {
   if (!player) return;
 
   const place = gameState.standings.length + 1;
-  gameState.standings.push({id:playerId, name:player.name, place});
-  gameState.finishQueue.push({id:playerId, name:player.name, place});
+  gameState.standings.push({id:playerId,name:player.name,place});
+  gameState.finishQueue.push({id:playerId,name:player.name,place});
   gameState.order = gameState.order.filter(id => id !== playerId);
 
   if (gameState.turn >= gameState.order.length) gameState.turn = 0;
@@ -810,13 +840,13 @@ function recordFinish(playerId) {
 
     if (last) {
       const lastPlace = place + 1;
-      gameState.standings.push({id:last.id, name:last.name, place:lastPlace});
-      gameState.finishQueue.push({id:last.id, name:last.name, place:lastPlace});
+      gameState.standings.push({id:last.id,name:last.name,place:lastPlace});
+      gameState.finishQueue.push({id:last.id,name:last.name,place:lastPlace});
       addLog("finish", `🏁 <b>${escapeHtml(last.name)}</b> finished in <b>${lastPlace}${["st","nd","rd"][lastPlace-1] || "th"} place</b>.`);
     }
 
     gameState.order = [];
-    addLog("finish","🏆 <b>The game is complete!</b> All places decided.");
+    addLog("finish","🏆 <b>The game is complete!</b>");
   }
 }
 
@@ -840,7 +870,6 @@ function handleAction(playerId, message) {
     }
 
     const claimedRank = String(message.claimedRank || "").toUpperCase();
-
     if (!RANKS.includes(claimedRank)) {
       addLog("info","Invalid rank.");
       broadcastState();
@@ -866,22 +895,20 @@ function handleAction(playerId, message) {
     }
 
     const cards = indices.map(index => player.hand[index]);
-    for (const index of indices) player.hand.splice(index,1);
+    indices.forEach(index => player.hand.splice(index,1));
 
     gameState.pile.push(...cards);
     gameState.lastPlay = {
-      playerId,
-      count:cards.length,
-      rank:claimedRank,
-      cards
+      playerId, count:cards.length, rank:claimedRank, cards
     };
     gameState.passCount = 0;
 
-    const faceDown = '<span class="mini-cards">' +
-      '<span class="mini-card back">🂠</span>'.repeat(cards.length) +
+    const verb = gameState.claim ? "continued" : "claimed";
+    const backs = '<span class="mini-cards">' +
+      '<span class="mini-card">🂠</span>'.repeat(cards.length) +
       "</span>";
 
-    addLog("play", `<b>${escapeHtml(player.name)}</b> ${gameState.claim ? "continued" : "claimed"} <b>${claimedRank}</b> ×${cards.length} — face down. ${faceDown}`);
+    addLog("play", `<b>${escapeHtml(player.name)}</b> ${verb} <b>${claimedRank}</b> ×${cards.length} — face down. ${backs}`);
 
     if (!gameState.claim) {
       gameState.claim = {rank:claimedRank, starterId:playerId};
@@ -923,7 +950,7 @@ function handleAction(playerId, message) {
       const taken = gameState.pile.splice(0);
       penalized.hand.push(...taken);
       penalized.hand.sort();
-      addLog("penalty", `⚠️ The pile (${taken.length} cards) goes to <b>${escapeHtml(penalized.name)}</b>'s hand.`);
+      addLog("penalty", `The pile (${taken.length} cards) goes to <b>${escapeHtml(penalized.name)}</b>'s hand.`);
     }
 
     gameState.claim = null;
@@ -931,8 +958,8 @@ function handleAction(playerId, message) {
     gameState.passCount = 0;
     gameState.pendingWinner = null;
 
-    const index = gameState.order.indexOf(roundWinnerId);
-    gameState.turn = index >= 0 ? index : 0;
+    const winnerIndex = gameState.order.indexOf(roundWinnerId);
+    gameState.turn = winnerIndex >= 0 ? winnerIndex : 0;
 
     addLog("info", `<b>${escapeHtml(roundWinner?.name || "Player")}</b> wins the round and throws first next claim.`);
     broadcastState();
@@ -959,7 +986,7 @@ function handleAction(playerId, message) {
       if (gameState.order.length) {
         if (gameState.turn >= gameState.order.length) gameState.turn = 0;
         const nextPlayer = playerById(gameState.order[gameState.turn]);
-        addLog("info", `The others play on! <b>${escapeHtml(nextPlayer?.name || "?")}</b> throws first next claim.`);
+        addLog("info", `The others continue. <b>${escapeHtml(nextPlayer?.name || "?")}</b> throws first.`);
       } else {
         addLog("finish","🏆 <b>The game is complete!</b>");
       }
@@ -982,9 +1009,9 @@ function handleAction(playerId, message) {
       gameState.pendingWinner = null;
       gameState.turn = gameState.order.indexOf(nextId);
 
-      addLog("info", `Everyone passed. The pile was removed unseen. <b>${escapeHtml(nextPlayer?.name || "Next player")}</b> throws first next claim.`);
+      addLog("info", `Everyone passed. <b>${escapeHtml(nextPlayer?.name || "Next player")}</b> starts the next claim.`);
     } else {
-      addLog("info", `<b>${escapeHtml(player.name)}</b> passed (accepts the <b>${escapeHtml(gameState.claim.rank)}</b> claim).`);
+      addLog("info", `<b>${escapeHtml(player.name)}</b> passed.`);
       nextTurn();
     }
 
@@ -1001,8 +1028,8 @@ function cardHtml(card, index, isSelected, disabled) {
   const red = suitOf(card) === "♥" || suitOf(card) === "♦";
 
   return `<button class="card ${red ? "red" : ""} ${isSelected ? "selected" : ""}"
-    data-index="${index}" ${disabled ? "disabled" : ""}
-    aria-label="${escapeHtml(card)}" aria-pressed="${isSelected}">
+      data-index="${index}" ${disabled ? "disabled" : ""}
+      aria-label="${escapeHtml(card)}" aria-pressed="${isSelected}">
     <span class="corner">${escapeHtml(rankOf(card))}</span>
     <span class="suit">${escapeHtml(suitOf(card))}</span>
   </button>`;
@@ -1014,6 +1041,8 @@ const ORDINALS = {1:"1st place",2:"2nd place",3:"3rd place"};
 const ordinal = place => ORDINALS[place] || `${place}th place`;
 
 function pumpPopupQueue(state) {
+  if (!$("winOverlay").classList.contains("hidden")) return;
+
   const queue = state.finishQueue || [];
   if (shownFinishCount >= queue.length) return;
 
@@ -1028,7 +1057,7 @@ function pumpPopupQueue(state) {
   $("winWho").textContent = `${event.name} ${PLACE_TROPHIES[event.place] || "🎖️"}`;
   $("winSub").textContent = gameOver && remaining === 0
     ? "The game is complete. Final standings:"
-    : `Finished ${ordinal(event.place)}. The rest keep playing!`;
+    : `Finished ${ordinal(event.place)}. The game continues!`;
 
   $("winStandings").innerHTML = (state.standings || []).map(entry =>
     `<li>${PLACE_MEDALS[entry.place] || entry.place + "."} <b>${escapeHtml(entry.name)}</b> — ${ordinal(entry.place)}</li>`
@@ -1042,19 +1071,21 @@ function pumpPopupQueue(state) {
 }
 
 function renderTable(state, claimLabel) {
-  const cardsContainer = $("tableCards");
-  const cardCount = Math.min(state.pileCount || 0, 12);
+  const pileCount = Math.min(state.pileCount || 0, 12);
+  const mostRecentPlayer = state.lastPlay
+    ? state.players.find(player => player.id === state.lastPlay.playerId)?.name
+    : null;
 
   $("tableClaim").textContent = state.claim
-    ? `${claimLabel(state.claim.rank)} claim${state.lastPlay ? " · last played by " + (state.players.find(p => p.id === state.lastPlay.playerId)?.name || "player") : ""}`
-    : "No open claim — the next player chooses a rank";
+    ? `${claimLabel(state.claim.rank)} claim${mostRecentPlayer ? " · last played by " + mostRecentPlayer : ""}`
+    : "No open claim · the next player chooses a rank";
 
-  cardsContainer.innerHTML = Array.from({length:cardCount}, (_, index) =>
+  $("tableCards").innerHTML = Array.from({length:pileCount}, (_, index) =>
     `<span class="played-card" style="--tilt:${(index % 5 - 2) * 4}deg" aria-label="Face-down card">🂠</span>`
   ).join("");
 
   $("tableCount").textContent = state.pileCount
-    ? `${state.pileCount} card${state.pileCount === 1 ? "" : "s"} face down on the table`
+    ? `${state.pileCount} face-down card${state.pileCount === 1 ? "" : "s"}`
     : "No cards on the table";
 }
 
@@ -1100,12 +1131,12 @@ function render() {
     $("turnHelp").textContent = "Watch the remaining players.";
   } else if (myTurn && pending) {
     $("turnTitle").textContent = "⚖️ Doubt or accept?";
-    $("turnHelp").textContent = `${pending.name} played their last card. Doubt it, or accept — then they finish.`;
+    $("turnHelp").textContent = `${pending.name} played their last card. Doubt it, or accept.`;
   } else if (myTurn) {
     $("turnTitle").textContent = "🎯 Your turn";
     $("turnHelp").textContent = state.claim
       ? `Continue the ${claimLabel(state.claim.rank)} claim, doubt, or pass.`
-      : `Select 1–${MAX_PLAY} cards, then choose a rank.`;
+      : `Select cards, then choose a rank.`;
   } else {
     $("turnTitle").textContent = `⏳ ${turnPlayer?.name || "Another player's"} turn`;
     $("turnHelp").textContent = "Wait for your turn.";
@@ -1131,6 +1162,7 @@ function render() {
 
   if (canPlay && !state.claim) {
     $("rankPanel").classList.remove("hidden");
+
     $("rankGrid").innerHTML = RANKS.map(rank =>
       `<button class="rank-btn" data-rank="${rank}" ${selected.size < 1 ? "disabled" : ""}>
         ${rank}${rankNames[rank] ? `<small>${rankNames[rank]}</small>` : ""}
@@ -1150,11 +1182,11 @@ function render() {
   }
 
   $("handHint").textContent = myStanding
-    ? "You finished — enjoy watching!"
+    ? "You finished — watch the rest of the game."
     : !state.started
       ? "Cards appear when the host starts."
       : selected.size
-        ? `${selected.size} selected (max ${MAX_PLAY}).` + (canPlay && !state.claim ? " Choose a rank." : "")
+        ? `${selected.size} selected (max ${MAX_PLAY}).`
         : canPlay
           ? state.claim ? `Select cards for the ${claimLabel(state.claim.rank)} claim.` : "Select cards to play."
           : "Act on your turn.";
@@ -1179,7 +1211,7 @@ function render() {
     actionsHtml = `<button id="playBtn" class="primary" ${selected.size < 1 ? "disabled" : ""}>▶ Throw ${selected.size}</button>
       <button id="doubtBtn" class="danger">🕵 Doubt</button><button id="passBtn">✔ Pass</button>`;
   } else if (myTurn) {
-    actionsHtml = `<span class="muted">Select cards, then choose a rank above.</span>`;
+    actionsHtml = `<span class="muted">Select cards, then choose a rank.</span>`;
   } else {
     actionsHtml = `<span class="muted">Waiting for your turn…</span>`;
   }
@@ -1211,6 +1243,7 @@ function render() {
     };
   }
 
+  // Only the latest two log entries are displayed.
   $("log").innerHTML = (state.log || []).slice(-2).map(entry =>
     `<div class="log-entry">
       <span class="log-tag ${escapeHtml(entry.tag || "info")}">${escapeHtml((entry.tag || "info").toUpperCase())}</span>
@@ -1260,18 +1293,18 @@ function showRetry() {
 }
 
 function friendlyError(type) {
-  const messages = {
+  const errors = {
     "peer-unavailable":"Room not found. Check the code and make sure the host is online.",
     "unavailable-id":"That room code is already in use. Create a different room.",
     "network":"Cannot reach the signaling server. Check your internet, then Retry.",
     "server-error":"Signaling server problem. Retry.",
     "socket-error":"Connection dropped. Check your internet and Retry.",
     "socket-closed":"Connection to the server closed. Retry.",
-    "browser-incompatible":"This browser does not support WebRTC. Try a current browser.",
+    "browser-incompatible":"This browser does not support WebRTC. Try an up-to-date browser.",
     "webrtc":"WebRTC failed on this network. Try switching between Wi-Fi and mobile data.",
     "disconnected":"Lost connection. Retry."
   };
-  return messages[type] || `Connection problem (${type || "unknown"}). Retry.`;
+  return errors[type] || `Connection problem (${type || "unknown"}). Retry.`;
 }
 
 function newPeer(id) {
@@ -1300,7 +1333,7 @@ $("createBtn").onclick = () => {
   peer = newPeer(roomPeerId(roomCode));
 
   connectTimer = setTimeout(() => {
-    setStatus("The server took too long. Retry or use another room code.", true);
+    setStatus("The server took too long. Retry or choose another room code.", true);
     showRetry();
     resetLobby();
     try { peer?.destroy(); } catch (error) {}
@@ -1387,7 +1420,7 @@ $("joinBtn").onclick = () => {
   peer = newPeer();
 
   connectTimer = setTimeout(() => {
-    setStatus("Connection took too long. Check the code and confirm the host is online, then Retry.", true);
+    setStatus("Connection took too long. Check the room code and confirm the host is online, then Retry.", true);
     showRetry();
     resetLobby();
     try { peer?.destroy(); } catch (error) {}
@@ -1422,7 +1455,7 @@ $("joinBtn").onclick = () => {
     hostConn.on("error", error => {
       clearConnectTimer();
       console.error("Host connection error:", error);
-      setStatus("Could not connect. Check the room code and that the host is online, then Retry.", true);
+      setStatus("Could not connect. Check the room code and confirm the host is online, then Retry.", true);
       showRetry();
       resetLobby();
     });
