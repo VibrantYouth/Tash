@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Da Hujre Tash — Card Game</title>
 <style>
   :root {
@@ -18,7 +18,7 @@
     --danger: #ff7b7b;
     --gold: #ffd166;
   }
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
     margin: 0;
     padding: 20px 14px 40px;
@@ -44,7 +44,7 @@
     transition: transform .08s ease, filter .15s ease;
   }
   button:hover:not(:disabled) { filter: brightness(1.15); transform: translateY(-1px); }
-  button:active:not(:disabled) { transform: translateY(0); }
+  button:active:not(:disabled) { transform: translateY(0) scale(.98); }
   button:disabled { opacity: .4; cursor: not-allowed; }
   button.primary {
     border-color: transparent;
@@ -128,10 +128,7 @@
     border-color: var(--accent);
     box-shadow: 0 0 0 1px var(--accent), 0 0 22px rgba(75,224,198,.25);
   }
-  .player.done {
-    opacity: .65;
-    border-color: rgba(255,209,102,.45);
-  }
+  .player.done { opacity: .65; border-color: rgba(255,209,102,.45); }
   .player-name { font-weight: 750; }
   .player-meta { margin-top: 5px; color: var(--muted); font-size: 13px; }
   .medal { margin-left: 6px; }
@@ -180,7 +177,6 @@
   .hint { min-height: 22px; color: var(--muted); font-size: 13px; }
   #actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 
-  /* Mini cards for the log */
   .log-entry {
     display: flex;
     align-items: center;
@@ -208,11 +204,6 @@
     box-shadow: 0 2px 6px rgba(0,0,0,.35);
   }
   .mini-card.red { color: #d8334c; }
-  .mini-card.back {
-    background: repeating-linear-gradient(45deg, #2b4a7a, #2b4a7a 4px, #1d3557 4px, #1d3557 8px);
-    color: transparent;
-    border-color: rgba(255,255,255,.4);
-  }
   .mini-cards { display: inline-flex; flex-wrap: wrap; gap: 4px; margin-left: 4px; }
   .log-tag {
     display: inline-block;
@@ -227,6 +218,7 @@
   .log-tag.penalty { background: rgba(255,209,102,.18); color: var(--gold); }
   .log-tag.finish { background: rgba(255,209,102,.25); color: var(--gold); }
   .log-tag.info { background: rgba(125,178,255,.15); color: #9cc3ff; }
+  #log { max-height: 260px; overflow: auto; }
 
   #rankPanel {
     margin: 12px 0 2px;
@@ -251,12 +243,10 @@
     border: 1px solid var(--line);
   }
   .rank-btn:hover { border-color: var(--accent); }
-  #log { max-height: 260px; overflow: auto; }
 
   .rules { margin: 8px 0 0; padding-left: 20px; color: var(--muted); line-height: 1.7; }
   details summary { cursor: pointer; color: var(--accent); font-weight: 700; }
 
-  /* Winner popup */
   #winOverlay {
     position: fixed;
     inset: 0;
@@ -293,22 +283,102 @@
   }
   .win-card .who { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
   .win-card .sub { color: var(--muted); margin-bottom: 18px; }
-  .standings {
-    margin: 0 0 18px;
-    padding: 0;
-    list-style: none;
-    text-align: left;
-  }
+  .standings { margin: 0 0 18px; padding: 0; list-style: none; text-align: left; }
   .standings li {
     padding: 8px 12px;
     border-bottom: 1px solid rgba(255,255,255,.1);
     font-size: 15px;
   }
   .popup-count { color: var(--muted); font-size: 12px; margin-bottom: 10px; }
-  @media (max-width: 520px) {
-    body { padding: 12px 8px 30px; }
-    .panel { padding: 14px; }
-    .card { width: 58px; height: 80px; font-size: 18px; }
+
+  /* ============ MOBILE DESIGN ============ */
+  @media (max-width: 600px) {
+    body {
+      padding: 10px 8px calc(88px + env(safe-area-inset-bottom));
+    }
+    h1 { font-size: 23px; }
+    .subtitle { font-size: 13px; margin-bottom: 10px; }
+    .panel {
+      padding: 13px 12px;
+      border-radius: 14px;
+      margin: 10px 0;
+    }
+    input { width: 100%; min-height: 50px; font-size: 16px; }
+    .row input { flex: 1 1 100%; }
+    button { min-height: 50px; font-size: 15px; padding: 10px 14px; flex: 1 1 auto; }
+    .row { gap: 8px; }
+
+    /* Bigger, tappable cards that auto-fit narrow screens */
+    #hand { gap: 8px; margin: 12px 0; }
+    .card {
+      width: clamp(52px, 21vw, 68px);
+      height: clamp(72px, 29vw, 92px);
+      font-size: 17px;
+      border-width: 2px;
+    }
+    .card.selected { transform: translateY(-12px) scale(1.06); }
+
+    /* Turn banner compact */
+    .turnbox { padding: 12px; }
+    .turnbox strong { font-size: 16px; }
+
+    /* Players grid: 2 per row on phones */
+    #players { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .player { padding: 10px; }
+    .player-name { font-size: 14px; }
+
+    /* Table & pile */
+    .table { padding: 12px; font-size: 14px; }
+
+    /* Rank buttons: comfortable thumb targets */
+    #rankPanel .rank-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .rank-btn { min-height: 52px; font-size: 19px; }
+
+    /* Log takes most of the screen */
+    #log { max-height: 40vh; font-size: 13px; }
+    .log-entry { font-size: 12px; }
+    .mini-card { min-width: 26px; height: 36px; font-size: 12px; }
+
+    /* Win popup fits small screens */
+    .win-card { padding: 24px 18px; }
+    .win-card .trophy { font-size: 46px; }
+    .win-card h2 { font-size: 20px; }
+    .win-card .who { font-size: 18px; }
+
+    /* Sticky action bar: Play / Doubt / Pass always visible at the bottom */
+    #actions {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
+      margin: 0;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+      background: rgba(11, 18, 32, .92);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--line);
+    }
+    #actions button { flex: 1 1 45%; }
+    #actions .muted {
+      flex: 1 1 100%;
+      text-align: center;
+      font-size: 13px;
+      padding: 6px 0;
+    }
+  }
+
+  /* Very narrow phones (iPhone SE etc.) */
+  @media (max-width: 360px) {
+    #players { grid-template-columns: 1fr; }
+    #rankPanel .rank-grid { grid-template-columns: repeat(5, 1fr); }
+    .card { width: clamp(46px, 19vw, 56px); height: clamp(64px, 26vw, 76px); }
+  }
+
+  /* Landscape phones: keep hand reachable, shrink log */
+  @media (max-height: 480px) and (orientation: landscape) {
+    #log { max-height: 120px; }
+    .card { width: 54px; height: 74px; }
+    #players { grid-template-columns: repeat(4, 1fr); }
   }
 </style>
 </head>
@@ -379,7 +449,6 @@
     </details>
   </section>
 
-  <!-- Winner popup -->
   <div id="winOverlay" class="hidden">
     <div class="win-card">
       <div class="trophy" id="winTrophy">🏆</div>
@@ -393,13 +462,14 @@
   </div>
 </main>
 
-<script src="https://cdn.bootcdn.net/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js" crossorigin="anonymous"></script>
 <script>
 "use strict";
 
 const RANKS = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
 const SUITS = ["♠","♥","♦","♣"];
 const MAX_PLAY = 4; // maximum cards a player can throw per turn
+const MAX_PLAYERS = 8; // security: room capacity cap
 const $ = id => document.getElementById(id);
 
 let peer = null;
@@ -410,35 +480,53 @@ let roomCode = "";
 let myName = "";
 let gameState = null;
 let selected = new Set();
-let shownFinishCount = 0;  // how many finish events this client has already popped up
-let popupQueue = [];       // finish events waiting to be displayed
+let shownFinishCount = 0; // how many finish events this client has already popped up
+let popupQueue = []; // finish events waiting to be displayed
+let lastActionAt = {}; // security: anti-flood tracker
 
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, ch => ({
   "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
 }[ch]));
 
+/* Security: allow letters, digits, spaces, underscore, dash — strip everything else */
+function sanitizeName(value, fallback) {
+  const cleaned = String(value || "").replace(/[^\p{L}\p{N} _\-]/gu, "").trim().slice(0, 16);
+  return cleaned || fallback;
+}
+
+/* Security: strip dangerous tags from log text on the client side */
+function sanitizeLogText(text) {
+  return String(text || "")
+    .replace(/<\s*(script|iframe|object|embed|link|style|img|svg)[^>]*>/gi, "")
+    .replace(/on\w+\s*=/gi, "");
+}
+
 const rankOf = card => card.slice(0, -1);
 const suitOf = card => card.slice(-1);
 const cleanCode = value => value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
 
+/* Security: long, cryptographically random room codes (no confusing 0/O/1/I/L) */
 function newRoomCode() {
-  return Math.random().toString(36).slice(2, 6).toUpperCase();
+  const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  const bytes = new Uint32Array(6);
+  crypto.getRandomValues(bytes);
+  return [...bytes].map(b => chars[b % chars.length]).join("");
 }
 
 function freshGame() {
   return {
     started: false,
     players: [],
-    order: [],        // ids of players still in the game (not yet finished)
-    standings: [],    // [{id, name, place}] — 1st, 2nd, 3rd, ...
-    finishQueue: [],  // every finish event, in order — drives the popups
+    order: [],
+    standings: [],
+    finishQueue: [],
     turn: 0,
     pile: [],
     claim: null,
     lastPlay: null,
     passCount: 0,
-    pendingWinner: null, // player who just emptied their hand, awaiting accept/doubt
-    log: []           // structured entries: {tag, text, cards}
+    pendingWinner: null,
+    log: []
   };
 }
 
@@ -476,8 +564,8 @@ function publicStateFor(id) {
   };
 }
 
-function addLog(tag, text, cards) {
-  gameState.log.push({tag: tag || "info", text: text || "", cards: Array.isArray(cards) ? cards.slice() : []});
+function addLog(tag, text) {
+  gameState.log.push({tag: tag || "info", text: text || ""});
   if (gameState.log.length > 80) gameState.log.shift();
 }
 
@@ -496,9 +584,9 @@ function getMyState() {
 
 function addPlayer(id, name) {
   if (!gameState || gameState.started) return;
+  if (gameState.players.length >= MAX_PLAYERS) return;
   if (!gameState.players.some(player => player.id === id)) {
-    const safeName = String(name || "").trim().slice(0, 16) ||
-      `Player ${gameState.players.length + 1}`;
+    const safeName = sanitizeName(name, `Player ${gameState.players.length + 1}`);
     gameState.players.push({id, name:safeName, hand:[]});
     gameState.order = gameState.players.map(player => player.id);
     addLog("info", `<b>${escapeHtml(safeName)}</b> joined the room.`);
@@ -554,8 +642,6 @@ function nextTurn() {
   }
 }
 
-// Records a finisher: adds to standings + finishQueue (drives popups),
-// and removes them from the active order.
 function recordFinish(playerId) {
   const player = playerById(playerId);
   if (!player) return;
@@ -570,7 +656,6 @@ function recordFinish(playerId) {
   addLog("finish", `🏁 <b>${escapeHtml(player.name)}</b> finished in <b>${place}${["st","nd","rd"][place-1] || "th"} place</b>!`);
 
   if (gameState.order.length === 1) {
-    // The last remaining player takes the final place — game over.
     const lastId = gameState.order[0];
     const lastPlayer = playerById(lastId);
     if (lastPlayer) {
@@ -584,7 +669,6 @@ function recordFinish(playerId) {
   }
 }
 
-// Finishes the current claim. roundWinnerId throws the first card of the next claim.
 function finishClaim(roundWinnerId, message) {
   gameState.claim = null;
   gameState.lastPlay = null;
@@ -597,11 +681,10 @@ function finishClaim(roundWinnerId, message) {
 
 function handleAction(playerId, message) {
   if (!isHost || !gameState || !gameState.started) return;
-  if (gameState.order.length < 2) return; // game over — everyone has a place
+  if (gameState.order.length < 2) return;
 
   const currentId = gameState.order[gameState.turn % gameState.order.length];
   if (currentId !== playerId) {
-    addLog("info", "Action ignored: it is not that player's turn.");
     broadcastState();
     return;
   }
@@ -623,9 +706,7 @@ function handleAction(playerId, message) {
       return;
     }
 
-    // While a claim is open, the rank is locked — no switching ranks.
     if (gameState.claim && claimedRank !== gameState.claim.rank) {
-      addLog("info", `Tried to claim ${claimedRank}, but the open claim is ${gameState.claim.rank}.`);
       broadcastState();
       return;
     }
@@ -644,18 +725,15 @@ function handleAction(playerId, message) {
     for (const index of indices) player.hand.splice(index, 1);
 
     gameState.pile.push(...cards);
+    // NOTE: real cards are NEVER logged or broadcast on play — only the claimed rank.
     gameState.lastPlay = {playerId, count: cards.length, rank: claimedRank, cards};
     gameState.passCount = 0;
 
-    const cardHtml = cards.map(c =>
-      `<span class="mini-card ${suitOf(c)==="♥"||suitOf(c)==="♦" ? "red" : ""}">${escapeHtml(rankOf(c))}${suitOf(c)}</span>`
-    ).join("");
-
     if (!gameState.claim) {
       gameState.claim = {rank: claimedRank, starterId: playerId};
-      addLog("play", `<b>${escapeHtml(player.name)}</b> opened a claim of <b>${claimedRank}</b> with ${cards.length} card(s):`, cards);
+      addLog("play", `<b>${escapeHtml(player.name)}</b> opened a claim of <b>${escapeHtml(claimedRank)}</b> with <b>${cards.length}</b> card(s) — face down. 🂠`);
     } else {
-      addLog("play", `<b>${escapeHtml(player.name)}</b> continued <b>${claimedRank}</b> with ${cards.length} card(s):`, cards);
+      addLog("play", `<b>${escapeHtml(player.name)}</b> continued the <b>${escapeHtml(claimedRank)}</b> claim with <b>${cards.length}</b> card(s) — face down. 🂠`);
     }
 
     if (player.hand.length === 0) {
@@ -681,7 +759,6 @@ function handleAction(playerId, message) {
 
     const penalized = playerById(truthful ? playerId : play.playerId);
     if (!penalized) {
-      addLog("info", "Penalty could not be applied (player not found).");
       broadcastState();
       return;
     }
@@ -689,17 +766,17 @@ function handleAction(playerId, message) {
     const roundWinnerId = truthful ? play.playerId : playerId;
     const roundWinner = playerById(roundWinnerId);
 
-    addLog("doubt", `<b>${escapeHtml(player.name)}</b> doubted <b>${escapeHtml(bluffer?.name || "?")}</b>'s claim of <b>${play.rank}</b>. The claim was <b>${truthful ? "TRUE ✅" : "A BLUFF ❌"}</b>.`, play.cards);
+    // Cards are revealed ONLY here, after a doubt.
+    addLog("doubt", `<b>${escapeHtml(player.name)}</b> doubted <b>${escapeHtml(bluffer?.name || "?")}</b>'s claim of <b>${escapeHtml(play.rank)}</b>. The claim was <b>${truthful ? "TRUE ✅" : "A BLUFF ❌"}</b>.`);
+    addLog("info", `🔍 The revealed cards were:`, play.cards);
 
     if (gameState.pile.length > 0) {
       const takenCards = gameState.pile.splice(0);
       penalized.hand.push(...takenCards);
       penalized.hand.sort();
-      addLog("penalty", `⚠️ The whole pile (${takenCards.length} card(s)) goes to <b>${escapeHtml(penalized.name)}</b>'s hand:`, takenCards);
+      addLog("penalty", `⚠️ The whole pile (${takenCards.length} card(s)) goes to <b>${escapeHtml(penalized.name)}</b>'s hand.`);
     }
 
-    // If the player who emptied their hand gets caught bluffing,
-    // they are NOT out — the pile goes back into their hand and play continues.
     finishClaim(
       roundWinnerId,
       `<b>${escapeHtml(roundWinner?.name || "Player")}</b> wins the round and throws the first card of the next claim — it is their turn.`
@@ -711,13 +788,11 @@ function handleAction(playerId, message) {
 
   if (message.type === "pass") {
     if (!gameState.claim) {
-      addLog("info", "There is no claim to accept.");
       broadcastState();
       return;
     }
 
     if (gameState.pendingWinner) {
-      // The last claim was accepted: the player is officially out.
       const finisherId = gameState.pendingWinner;
       gameState.pile = [];
       gameState.claim = null;
@@ -729,7 +804,6 @@ function handleAction(playerId, message) {
       if (gameState.order.length === 0) {
         addLog("finish", "🏆 <b>The game is complete!</b> All places decided.");
       } else {
-        // Remaining players continue for the next place. Turn goes to the next player.
         if (gameState.turn >= gameState.order.length) gameState.turn = 0;
         const nextPlayer = playerById(gameState.order[gameState.turn]);
         addLog("info", `The remaining players continue for the next place! <b>${escapeHtml(nextPlayer?.name || "?")}</b> throws the first card of the next claim — it is their turn.`);
@@ -740,9 +814,6 @@ function handleAction(playerId, message) {
 
     gameState.passCount++;
     if (gameState.passCount >= gameState.order.length - 1) {
-      // Everyone else passed: the claim is finished and the pile is removed
-      // from the game. The turn goes to the NEXT player after the passer —
-      // they throw the first card of the next claim.
       gameState.pile = [];
       const nextId = gameState.order[(gameState.turn + 1) % gameState.order.length];
       const nextPlayer = playerById(nextId);
@@ -754,11 +825,11 @@ function handleAction(playerId, message) {
       gameState.turn = gameState.order.indexOf(nextId);
 
       addLog("info",
-        `Everyone passed. The pile was removed from the game. ` +
+        `Everyone passed. The pile was removed from the game unseen. ` +
         `<b>${escapeHtml(nextPlayer?.name || "The next player")}</b> throws the first card of the next claim — it is their turn.`
       );
     } else {
-      addLog("info", `<b>${escapeHtml(player.name)}</b> passed (accepts the <b>${gameState.claim.rank}</b> claim).`);
+      addLog("info", `<b>${escapeHtml(player.name)}</b> passed (accepts the <b>${escapeHtml(gameState.claim.rank)}</b> claim).`);
       nextTurn();
     }
     broadcastState();
@@ -783,16 +854,18 @@ function cardHtml(card, index, isSelected, disabled) {
   </button>`;
 }
 
+function miniCardHtml(card) {
+  const red = suitOf(card) === "♥" || suitOf(card) === "♦";
+  return `<span class="mini-card ${red ? "red" : ""}">${escapeHtml(rankOf(card))}${suitOf(card)}</span>`;
+}
+
 const PLACE_MEDALS = {1:"🥇", 2:"🥈", 3:"🥉"};
 const PLACE_TROPHIES = {1:"🏆", 2:"🥈", 3:"🥉"};
 const ORDINALS = {1:"1st place", 2:"2nd place", 3:"3rd place"};
 const ordinal = n => ORDINALS[n] || n + "th place";
 
-/* ---- Winner popup queue ----
-   Every finish event (1st, 2nd, 3rd, ...) is queued. Popups are shown
-   one after another so no finish is ever skipped or overwritten. */
 function pumpPopupQueue(state) {
-  if (popupQueue.length) return; // a popup is already on screen
+  if (popupQueue.length) return;
   const queue = state.finishQueue || [];
   if (shownFinishCount >= queue.length) return;
 
@@ -891,7 +964,7 @@ function render() {
         : `<b>No open claim.</b> The next player to play chooses any rank.<br>`) +
       `<span class="pilecount">Cards on the table: ${state.pileCount}</span>` +
       (state.lastPlay
-        ? `<br><b>Last play:</b> ${state.lastPlay.count} card(s), claimed as <b>${escapeHtml(claimLabel(state.lastPlay.rank))}</b>, from ${escapeHtml(lastPlayer)}.`
+        ? `<br><b>Last play:</b> ${state.lastPlay.count} card(s), claimed as <b>${escapeHtml(claimLabel(state.lastPlay.rank))}</b>, from ${escapeHtml(lastPlayer)} — face down.`
         : "<br>No cards have been played yet.");
   } else if (state.started) {
     const list = state.standings.map(entry =>
@@ -1001,27 +1074,23 @@ function render() {
     sendAction({type:"pass"});
   };
 
-  // Log with mini cards
+  // Log — mini cards appear only for REVEALED cards (after a doubt).
   $("log").innerHTML = (state.log || []).map(entry => {
-    const chips = (entry.cards || []).map(card =>
-      `<span class="mini-card ${suitOf(card)==="♥"||suitOf(card)==="♦" ? "red" : ""}">${escapeHtml(rankOf(card))}${suitOf(card)}</span>`
-    ).join("");
+    const chips = (entry.cards || []).map(miniCardHtml).join("");
     return `<div class="log-entry">
       <span class="log-tag ${escapeHtml(entry.tag || "info")}">${escapeHtml((entry.tag || "info").toUpperCase())}</span>
-      <span>${entry.text}</span>
+      <span>${sanitizeLogText(entry.text)}</span>
       ${chips ? `<span class="mini-cards">${chips}</span>` : ""}
     </div>`;
   }).join("");
   const logBox = $("log");
   logBox.scrollTop = logBox.scrollHeight;
 
-  // Popup queue: show the next unseen finish event, if any.
   pumpPopupQueue(state);
 }
 
 $("winCloseBtn").onclick = () => {
   $("winOverlay").classList.add("hidden");
-  // Immediately show the next queued announcement, if there is one.
   const state = getMyState();
   if (state) pumpPopupQueue(state);
 };
@@ -1037,9 +1106,9 @@ $("createBtn").onclick = () => {
     return;
   }
 
-  myName = ($("nameInput").value || "").trim().slice(0,16) || "Host";
+  myName = sanitizeName($("nameInput").value, "Host");
   roomCode = cleanCode($("roomInput").value);
-  if (roomCode.length < 3) roomCode = newRoomCode();
+  if (roomCode.length < 5) roomCode = newRoomCode();
 
   $("createBtn").disabled = true;
   $("joinBtn").disabled = true;
@@ -1069,7 +1138,13 @@ $("createBtn").onclick = () => {
     connection.on("data", data => {
       if (!data || typeof data.type !== "string") return;
       if (data.type === "join") addPlayer(connection.peer, data.name);
-      else handleAction(connection.peer, data);
+      else {
+        // Security: anti-flood — ignore messages faster than 150ms apart
+        const now = Date.now();
+        if (now - (lastActionAt[connection.peer] || 0) < 150) return;
+        lastActionAt[connection.peer] = now;
+        handleAction(connection.peer, data);
+      }
     });
 
     connection.on("close", () => {
@@ -1098,11 +1173,11 @@ $("joinBtn").onclick = () => {
     return;
   }
 
-  myName = ($("nameInput").value || "").trim().slice(0,16) || "Player";
+  myName = sanitizeName($("nameInput").value, "Player");
   roomCode = cleanCode($("roomInput").value);
 
-  if (roomCode.length < 3) {
-    $("status").textContent = "Enter a room code with at least 3 characters.";
+  if (roomCode.length < 5) {
+    $("status").textContent = "Enter a room code with at least 5 characters.";
     return;
   }
 
