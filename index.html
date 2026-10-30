@@ -187,6 +187,13 @@
   #game .panel { flex:0 0 auto; }
   #logPanel { flex:1 1 auto; display:flex; flex-direction:column; min-height:0; }
 
+  /* Center the lobby screen vertically */
+  body.lobby-mode { justify-content:center; }
+  body.lobby-mode h1 { text-align:center; width:100%; }
+  body.lobby-mode .subtitle { text-align:center; width:100%; }
+  body.lobby-mode #lobby { width:min(560px,100%); margin:0 auto; }
+  body.lobby-mode #lobby .row { justify-content:center; }
+
   @media (max-height:700px) {
     #log { max-height:20vh; }
     .card { width:clamp(42px,12vw,56px); height:clamp(58px,17vw,78px); }
@@ -270,6 +277,8 @@
 <script>
 "use strict";
 
+document.body.classList.add("lobby-mode");
+
 const RANKS = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
 const SUITS = ["♠","♥","♦","♣"];
 const MAX_PLAY = 4;
@@ -310,11 +319,6 @@ function freshGame(){
     turn:0, pile:[], claim:null, lastPlay:null, passCount:0, pendingWinner:null, log:[] };
 }
 const playerById = id => gameState?.players.find(p => p.id === id) || null;
-
-/* Room directory: the host registers a free peer id like "tashdir-<CODE>".
-   Clients connect to it first to ask for the host's real (random) peer id.
-   This avoids custom-id collisions on the PeerJS cloud. */
-let directoryConn = null; // on host: map code -> real id handled via separate registry conn
 
 function publicStateFor(id){
   const p = playerById(id);
@@ -677,75 +681,68 @@ $("winCloseBtn").onclick = () => {
 };
 
 function showGame(){
+  document.body.classList.remove("lobby-mode");
   $("lobby").classList.add("hidden");
   $("game").classList.remove("hidden");
 }
 
 /* ---------- connectivity helpers ---------- */
 
+const SIGNALING_SERVERS = [
+  {}, // default 0.peerjs.com
+  { host: "peerjs.introtech.in", secure: true, port: 443 },
+  { host: "0.peerjs.com", port: 443, secure: true, path: "/" }
+];
+let serverIdx = 0;
+
 function peerConfig(){
-  return { debug:1, config:{ iceServers:[
-    {urls:"stun:stun.l.google.com:19302"},
-    {urls:"stun:stun1.l.google.com:19302"},
-    {urls:"stun:stun.cloudflare.com:3478"},
-    /* TURN relay — critical for mobile networks / strict NATs */
-    {urls:"turn:openrelay.metered.ca:80", username:"openrelayproject", credential:"openrelayproject"},
-    {urls:"turn:openrelay.metered.ca:443", username:"openrelayproject", credential:"openrelayproject"},
-    {urls:"turn:openrelay.metered.ca:443?transport=tcp", username:"openrelayproject", credential:"openrelayproject"}
-  ]}};
+  return { debug:1, ...SIGNALING_SERVERS[serverIdx],
+    config:{ iceServers:[
+      {urls:"stun:stun.l.google.com:19302"},
+      {urls:"stun:stun1.l.google.com:19302"},
+      {urls:"stun:stun.cloudflare.com:3478"},
+      /* TURN relay — critical for mobile networks / strict NATs */
+      {urls:"turn:openrelay.metered.ca:80", username:"openrelayproject", credential:"openrelayproject"},
+      {urls:"turn:openrelay.metered.ca:443", username:"openrelayproject", credential:"openrelayproject"},
+      {urls:"turn:openrelay.metered.ca:443?transport=tcp", username:"openrelayproject", credential:"openrelayproject"}
+    ]}};
 }
 
 function setStatus(text, isError, busy){
   const el = $("status");
-  el.textContent = (busy ? "" : "") + text;
   el.classList.toggle("error", !!isError);
   if (busy) el.innerHTML = `<span class="spinner"></span>${escapeHtml(text)}`;
+  else el.textContent = text;
 }
-function showRetry(){
-  $("retryBtn").classList.remove("hidden");
-}
+function showRetry(){ $("retryBtn").classList.remove("hidden"); }
 function clearConnectTimer(){ if (connectTimer) { clearTimeout(connectTimer); connectTimer = null; } }
-
 function resetLobby(){
   clearConnectTimer();
   $("createBtn").disabled = false; $("joinBtn").disabled = false;
 }
 function friendlyError(type){
-  const map = {
-    "peer-unavailable": "Room not found. Check the code, and make sure the host's screen is still open.",
-    "unavailable-id": "That room is already taken. Create a new one.",
-    "network": "Cannot reach the signaling server. Check your internet, then Retry.",
-    "server-error": "Signaling server problem. Wait a moment and Retry.",
-    "socket-error": "Connection dropped. Check internet, then Retry.",
-    "socket-closed": "Connection to server closed. Retry.",
-    "browser-incompatible": "This browser doesn't support WebRTC. Try Chrome.",
-    "webrtc": "WebRTC failed on this network. Try switching between Wi-Fi and mobile data.",
-    "disconnected": "Lost connection to the server. Retry."
-  };
+  const map = {"peer-unavailable":"Room not found. Check the code — the host's tab must stay open.","unavailable-id":"Room name taken, retrying…","network":"Cannot reach the signaling server. Check internet, then Retry.","server-error":"Signaling server problem. Retry — it will try another server.","socket-error":"Connection dropped. Retry.","socket-closed":"Connection to server closed. Retry.","browser-incompatible":"This browser doesn't support WebRTC. Use Chrome.","webrtc":"WebRTC failed on this network. Switch between Wi-Fi and mobile data.","disconnected":"Lost connection. Retry."};
   return map[type] || `Connection problem (${type||"unknown"}). Retry.`;
 }
-
 function newPeer(){
   if (peer) { try { peer.destroy(); } catch(e){} }
-  peer = new Peer(peerConfig());
-  return peer;
+  return new Peer(peerConfig());
 }
+function nextServer(){ serverIdx = (serverIdx + 1) % SIGNALING_SERVERS.length; }
 
-/* HOST: register "tashdir-<CODE>" as a lightweight directory that
-   answers joiners with the host's real peer id, then closes. */
+/* HOST: registers "tashdir-<CODE>" as a lightweight directory that
+   answers joiners with the host's real (random) peer id. */
 function hostDirectory(){
   const dir = new Peer(peerConfig());
   dir.on("open", () => {
     dir.on("connection", conn => {
-      conn.on("data", d => {
-        if (d && d.type === "whereis") conn.send({type:"host", hostId: peer.id});
-      });
+      conn.on("data", d => { if (d && d.type === "whereis") conn.send({type:"host", hostId: peer.id}); });
     });
   });
   dir.on("error", () => { /* directory is best-effort; game continues */ });
 }
 
-/* CLIENT: ask directory for the host's real id, then connect to it */
+/* CLIENT: ask the directory for the host's real id, then connect to it */
 function resolveHostId(code, cb){
   const dirPeer = new Peer(peerConfig());
   let done = false;
@@ -769,6 +766,15 @@ function resolveHostId(code, cb){
   });
 }
 
+/* keep the host's signaling connection alive */
+function startHeartbeat(){
+  setInterval(() => {
+    if (peer && peer.open && !peer.disconnected) { try { peer.socket.send({type:"PING"}); } catch(e){} }
+  }, 20000);
+}
+
+/* ---------- host ---------- */
+
 $("createBtn").onclick = () => {
   if (!window.Peer) { setStatus("PeerJS did not load. Check internet and reload.", true); return; }
   myName = sanitizeName($("nameInput").value, "Host");
@@ -776,14 +782,22 @@ $("createBtn").onclick = () => {
   if (roomCode.length < 5) roomCode = newRoomCode();
   $("createBtn").disabled = true; $("joinBtn").disabled = true;
   $("retryBtn").classList.add("hidden");
-  setStatus("Creating room…", false, true);
+  setStatus(`Creating room (server ${serverIdx+1})…`, false, true);
+
   peer = newPeer();
-  /* Host uses a RANDOM server-assigned id — no more id collisions */
+  connectTimer = setTimeout(() => {
+    nextServer();
+    setStatus("Server not responding, retrying with another server…", false, true);
+    try { peer.destroy(); } catch(e){}
+    $("createBtn").click(); // auto-fallback to next server
+  }, CONNECT_TIMEOUT);
+
   peer.on("open", () => {
     clearConnectTimer();
     isHost = true; gameState = freshGame();
     addPlayer(peer.id, myName);
-    hostDirectory(); // answer "where is room CODE?" for joiners
+    hostDirectory();
+    startHeartbeat();
     showGame();
     $("roomLabel").textContent = roomCode;
     $("connectionLabel").textContent = "Host online";
@@ -814,12 +828,18 @@ $("createBtn").onclick = () => {
     conn.on("error", () => addLog("info","A player connection had an error."));
   });
   peer.on("disconnected", () => {
-    if (isHost) { $("connectionLabel").textContent = "Reconnecting…"; try { peer.reconnect(); } catch(e){} }
+    if (isHost) {
+      $("connectionLabel").textContent = "Reconnecting…";
+      try { peer.reconnect(); } catch(e){}
+    }
   });
   peer.on("error", e => {
+    if (isHost && gameState) { addLog("info","Host connection error: "+(e.type||"")); broadcastState(); return; }
     setStatus(friendlyError(e.type), true); showRetry();
   });
 };
+
+/* ---------- client ---------- */
 
 $("joinBtn").onclick = () => {
   if (!window.Peer) { setStatus("PeerJS did not load. Check internet and reload.", true); return; }
@@ -831,28 +851,26 @@ $("joinBtn").onclick = () => {
   setStatus("Looking for room "+roomCode+"…", false, true);
 
   resolveHostId(roomCode, (err, hostId) => {
-    if (err === "timeout") { setStatus("Could not find the room in time. Make sure the host's game is open, then Retry.", true); showRetry(); return; }
+    if (err === "timeout" || err === "peer-unavailable") {
+      setStatus("Room not found. Is the host's tab still open on their phone? Then Retry.", true); showRetry(); return;
+    }
     if (err) { setStatus(friendlyError(err), true); showRetry(); return; }
 
-    setStatus("Connecting to host…", false, true);
     peer = newPeer();
     connectTimer = setTimeout(() => {
-      setStatus("Connecting is taking too long. Try Retry, or switch Wi-Fi ↔ mobile data.", true); showRetry();
+      setStatus("Taking too long. Retry, or switch Wi-Fi ↔ mobile data.", true); showRetry();
     }, CONNECT_TIMEOUT);
 
     peer.on("open", () => {
       hostConn = peer.connect(hostId, {reliable:true});
-      const opened = () => {
+      hostConn.on("open", () => {
         clearConnectTimer();
         hostConn.send({type:"join", name:myName});
         showGame();
         $("roomLabel").textContent = roomCode;
         $("connectionLabel").textContent = "Connected";
         setStatus("");
-      };
-      hostConn.on("open", opened);
-      /* in case "open" already fired before we attached: */
-      setTimeout(() => { if (!hostConn.open && !gameState) {} }, 0);
+      });
       hostConn.on("data", data => {
         if (data?.type === "state") {
           gameState = data.state;
@@ -863,19 +881,12 @@ $("joinBtn").onclick = () => {
       hostConn.on("close", () => {
         $("connectionLabel").textContent = "Disconnected";
         $("turnTitle").textContent = "Disconnected";
-        $("turnHelp").textContent = "The host closed the game or the connection dropped.";
+        $("turnHelp").textContent = "The host closed the game or connection dropped.";
       });
       hostConn.on("error", () => {
         clearConnectTimer();
         setStatus("Could not connect to the host. Retry.", true); showRetry();
       });
-      /* safety: if not open after timeout, report */
-      setTimeout(() => {
-        if (!hostConn.open) {
-          clearConnectTimer();
-          setStatus("Could not reach the host. Make sure the host is still in the game, then Retry.", true); showRetry();
-        }
-      }, CONNECT_TIMEOUT);
     });
     peer.on("error", e => {
       clearConnectTimer();
@@ -888,8 +899,9 @@ $("retryBtn").onclick = () => {
   $("retryBtn").classList.add("hidden");
   clearConnectTimer();
   try { peer?.destroy(); } catch(e){}
-  try { hostConn = null; } catch(e){}
-  peer = null; gameState = null; isHost = false;
+  peer = null; hostConn = null; gameState = null; isHost = false;
+  resetLobby();
+  document.body.classList.add("lobby-mode");
   setStatus("Ready. Choose Create or Join.", false);
 };
 </script>
